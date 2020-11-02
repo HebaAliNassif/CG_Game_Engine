@@ -12,7 +12,7 @@ class EmptyWindowApplication : public CGEngine::Application {
 
         //Specify the red, green, blue, and alpha values used when the color buffers are cleared.
         //Here the clear color is Magenta
-        glClearColor(0.5f, 0.2f, 0.7f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     void onImmediateGui(ImGuiIO &io) override {
