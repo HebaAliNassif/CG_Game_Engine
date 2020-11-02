@@ -11,8 +11,8 @@ class EmptyWindowApplication : public CGEngine::Application {
     void onInitialize() override {
 
         //Specify the red, green, blue, and alpha values used when the color buffers are cleared.
-        //Here the clear color is Black
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        //Here the clear color is Red
+        glClearColor(1.0f, 0.0f, 0.0f, 1.0f);
     }
 
     void onImmediateGui(ImGuiIO &io) override {
