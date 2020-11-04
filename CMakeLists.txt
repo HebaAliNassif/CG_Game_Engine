@@ -31,6 +31,7 @@ set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
 set(COMMON_SOURCES
         source/common/application.cpp
         source/common/texture/screenshot.cpp
+        source/common/shader.cpp
         )
 
 
@@ -41,7 +42,25 @@ include_directories(
         vendor/glm
         vendor/imgui
         vendor/utils
+        vendor/irrklang/include
+        assets/shaders/fshaders
+        assets/shaders/vshaders
 )
 
+
+if( CMAKE_CL_64)
+    configure_file(${CMAKE_SOURCE_DIR}/dlls/dlls_64/ikpMP3.dll ${CMAKE_SOURCE_DIR}/cmake-build-debug COPYONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/dlls/dlls_64/ikpFlac.dll ${CMAKE_SOURCE_DIR}/cmake-build-debug COPYONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/dlls/dlls_64/irrKlang.dll ${CMAKE_SOURCE_DIR}/cmake-build-debug COPYONLY)
+    link_directories(${CMAKE_SOURCE_DIR}/lib/libs_64)
+
+else()
+    configure_file(${CMAKE_SOURCE_DIR}/dlls/dlls_86/ikpMP3.dll ${CMAKE_SOURCE_DIR}/cmake-build-debug COPYONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/dlls/dlls_86/ikpFlac.dll ${CMAKE_SOURCE_DIR}/cmake-build-debug COPYONLY)
+    configure_file(${CMAKE_SOURCE_DIR}/dlls/dlls_86/irrKlang.dll ${CMAKE_SOURCE_DIR}/cmake-build-debug COPYONLY)
+    link_directories(${CMAKE_SOURCE_DIR}/lib/libs_86)
+endif(CMAKE_CL_64)
+
+
 add_executable(Computer_Graphics_Project source/main.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
-target_link_libraries(Computer_Graphics_Project glfw)
+target_link_libraries(Computer_Graphics_Project glfw irrKlang.lib )
