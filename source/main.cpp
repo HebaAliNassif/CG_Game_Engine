@@ -1,9 +1,7 @@
 #include <application.h>
 #include <shader.h>
-#include <irrKlang.h>
 #include <iostream>
 
-using namespace irrklang;
 
 
 // This exercise Window Application that derives from "Application" parent
@@ -15,7 +13,6 @@ class EmptyWindowApplication : public CGEngine::Application {
 
 
     // This overriden function sets the window configuration params struct (title, size, isFullscreen).
-    ISoundEngine* SoundEngine = createIrrKlangDevice();
 
     CGEngine::WindowConfiguration getWindowConfiguration() override {
         return { "Empty Window", {1280, 720}, false };

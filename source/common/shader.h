@@ -43,7 +43,7 @@ private:
     //Check and log for any error in the compilation process.
     void checkShaderCompilationErrors(GLuint shader);
     //Check and log for any error in the linking process.
-    void Shader::checkProgramLinkingErrors(GLuint program);
+    void checkProgramLinkingErrors(GLuint program);
 
 
 
