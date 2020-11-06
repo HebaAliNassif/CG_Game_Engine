@@ -2,15 +2,11 @@
 #include <shader.h>
 #include <iostream>
 
-
-
-// This exercise Window Application that derives from "Application" parent
 class EmptyWindowApplication : public CGEngine::Application {
     Shader program ;
     GLuint vertex_array = 0;
 
     glm::vec2 translation = glm::vec2(0,0);
-
 
     // This overriden function sets the window configuration params struct (title, size, isFullscreen).
 
@@ -22,7 +18,7 @@ class EmptyWindowApplication : public CGEngine::Application {
     void onInitialize() override {
         //->play2D("audio/breakout.mp3", true);
         program = Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape1.frag","shape1");
-
+        translation=Application::getMouse().getMousePosition();
         glGenVertexArrays(1, &vertex_array);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     }
