@@ -1,0 +1,5 @@
+C:/Users/amalm/Desktop/Computer_Graphics_Project/build/CMakeFiles/Computer_Graphics_Project.dir
+C:/Users/amalm/Desktop/Computer_Graphics_Project/build/CMakeFiles/ALL_BUILD.dir
+C:/Users/amalm/Desktop/Computer_Graphics_Project/build/CMakeFiles/ZERO_CHECK.dir
+C:/Users/amalm/Desktop/Computer_Graphics_Project/build/vendor/glfw/CMakeFiles/ALL_BUILD.dir
+C:/Users/amalm/Desktop/Computer_Graphics_Project/build/vendor/glfw/src/CMakeFiles/glfw.dir
