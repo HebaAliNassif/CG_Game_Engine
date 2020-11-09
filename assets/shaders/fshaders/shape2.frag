@@ -15,6 +15,6 @@ void main() {
 
     float result=pow(position.x,2)+pow((position.y+40-sqrt(abs(70*position.x))),2)-6000;
 
-    if (result<600)frag_color = vec4(1,0,0,1);
+    if (result<0)frag_color = vec4(1,0,0,1);
 
 }

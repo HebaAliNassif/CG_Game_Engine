@@ -2,7 +2,7 @@
 #include <shader.h>
 #include <iostream>
 
-class EmptyWindowApplication : public CGEngine::Application {
+class MainScrean : public CGEngine::Application {
     Shader program ;
     GLuint vertex_array = 0;
 
@@ -18,6 +18,10 @@ class EmptyWindowApplication : public CGEngine::Application {
     void onInitialize() override {
         //->play2D("audio/breakout.mp3", true);
         program = Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape1.frag","shape1");
+        Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape2.frag","shape2");
+        Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape3.frag","shape3");
+        Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape4.frag","shape4");
+
         translation=Application::getMouse().getMousePosition();
         glGenVertexArrays(1, &vertex_array);
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
@@ -46,19 +50,19 @@ class EmptyWindowApplication : public CGEngine::Application {
 
         if(scancode==79||scancode==2)
         {
-            program = Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape1.frag","shape1");
+            program = Shader::Shaders["shape1"];
         }
         else if(scancode==80||scancode==3)
         {
-            program = Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape2.frag","shape2");
+            program = Shader::Shaders["shape2"];
         }
         else if(scancode==81||scancode==4)
         {
-            program = Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape3.frag","shape3");
+            program = Shader::Shaders["shape3"];
         }
         else if(scancode==75||scancode==5)
         {
-            program = Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape4.frag","shape4");
+            program = Shader::Shaders["shape4"];
         }
     }
     void onCursorMoveEvent(double x, double y) override{
@@ -71,5 +75,5 @@ class EmptyWindowApplication : public CGEngine::Application {
 int main(int argc, char** argv) {
 
     // Creates an instance of EmptyWindowApplication and call run on this instance
-    return EmptyWindowApplication().run();
+    return MainScrean().run();
 }
