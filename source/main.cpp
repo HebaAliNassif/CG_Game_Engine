@@ -1,22 +1,22 @@
 #include <application.h>
 #include <shader.h>
+#include <irrKlang.h>
 #include <iostream>
-
+using namespace irrklang;
 class MainScrean : public CGEngine::Application {
     Shader program ;
     GLuint vertex_array = 0;
 
     glm::vec2 translation = glm::vec2(0,0);
-
+    ISoundEngine *SoundEngine=createIrrKlangDevice();
     // This overriden function sets the window configuration params struct (title, size, isFullscreen).
-
     CGEngine::WindowConfiguration getWindowConfiguration() override {
         return { "Empty Window", {1280, 720}, false };
     }
 
     // onInitialize() function is called once before the application loop
     void onInitialize() override {
-        //->play2D("audio/breakout.mp3", true);
+        SoundEngine->play2D("audio/breakout.mp3", true);
         program = Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape1.frag","shape1");
         Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape2.frag","shape2");
         Shader::LoadShader("assets/shaders/vshaders/screen.vert","assets/shaders/fshaders/shape3.frag","shape3");
