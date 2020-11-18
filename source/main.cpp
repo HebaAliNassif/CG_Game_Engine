@@ -2,7 +2,12 @@
 #include <shader.h>
 #include <irrKlang.h>
 #include <iostream>
+#include <ecs/entity.h>
+#include <transform.h>
+#include <camera.h>
+
 using namespace irrklang;
+
 class MainScrean : public CGEngine::Application {
     Shader program ;
     GLuint vertex_array = 0;
@@ -70,10 +75,18 @@ class MainScrean : public CGEngine::Application {
         translation.y=((y-720)*-1);
     }
 };
+using namespace CGEngine ;
 
 // Example Entry point
 int main(int argc, char** argv) {
 
+    Entity shape;
+    shape.addComponent<Transform>();
+    shape.addComponent<Camera>();
+
+    std::cout<<"Shape Count : "<< shape.ListOfComponents.size()<<"\n";
+    shape.destroyComponent<Transform>();
+    std::cout<<"Shape Count After Remove: "<< shape.ListOfComponents.size()<<"\n";
     // Creates an instance of EmptyWindowApplication and call run on this instance
     return MainScrean().run();
 }

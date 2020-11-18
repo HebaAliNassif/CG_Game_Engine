@@ -32,11 +32,18 @@ set(COMMON_SOURCES
         source/common/application.cpp
         source/common/texture/screenshot.cpp
         source/common/shader.cpp
+        source/common/ecs/component.cpp
+        source/common/components/transform.cpp
+        source/common/components/camera.cpp
+        source/common/ecs/entity.cpp
+
         )
 
 
 include_directories(
         source/common
+        source/common/components
+        source/common/ecs
         vendor/glfw/include
         vendor/glad/include
         vendor/glm

@@ -1,6 +1,3 @@
-//
-// Created by Heba on 04/11/2020.
-//
 
 #ifndef SHADER_H
 #define SHADER_H
