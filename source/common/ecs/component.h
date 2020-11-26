@@ -1,7 +1,11 @@
+#pragma once
 #ifndef COMPONENT_H
 #define COMPONENT_H
 #include <string>
 namespace CGEngine {
+
+    class Entity;
+    class Scene;
 
     enum componentType {
         transform,
@@ -10,12 +14,23 @@ namespace CGEngine {
 
     class Component {
 
-
+        using EntityID = uint32_t;
     public:
         std::string name;
         bool enabled = true;
+        Entity* entity = nullptr;
+        Scene* scene = nullptr;
+        EntityID entityId;
 
-        virtual std::string GetComponentName() { return name; }
+        EntityID getEntityId() const;
+
+        void setEntityId(EntityID entityId);
+
+        Entity *getEntity() const;
+
+        void setEntity(Entity *entity);
+
+        virtual std::string GetComponentName();
 
         Component(std::string Name) { name = Name; };
 

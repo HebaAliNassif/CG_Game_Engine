@@ -29,20 +29,23 @@ set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
 
 
 set(COMMON_SOURCES
-        source/common/application.cpp
+        source/common/application_manager.cpp
         source/common/texture/screenshot.cpp
         source/common/shader.cpp
         source/common/ecs/component.cpp
         source/common/components/transform.cpp
-        source/common/components/camera.cpp
         source/common/ecs/entity.cpp
-
+        source/common/ecs/scene.cpp
+        scenes/scene1.cpp
+        scenes/scene2.cpp
+        source/common/mesh/mesh-utils.cpp
         )
 
 
 include_directories(
         source/common
         source/common/components
+        source/common/mesh
         source/common/ecs
         vendor/glfw/include
         vendor/glad/include
@@ -55,6 +58,7 @@ include_directories(
         vendor/irrklang/include
         lib/libs_64
         lib/libs_86
+        scenes
 )
 
 
@@ -72,5 +76,5 @@ else()
 endif(CMAKE_CL_64)
 
 
-add_executable(Computer_Graphics_Project source/main.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
+add_executable(Computer_Graphics_Project source/manager.cpp ${COMMON_SOURCES} ${VENDOR_SOURCES})
 target_link_libraries(Computer_Graphics_Project glfw irrKlang)

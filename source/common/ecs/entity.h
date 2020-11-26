@@ -1,3 +1,4 @@
+#pragma once
 #ifndef ENTITY_H
 #define ENTITY_H
 
@@ -13,11 +14,24 @@ namespace CGEngine {
         int value=-1;
     };
     class Entity {
-
-
+        using EntityID = uint32_t;
+        friend class Scene;
     public:
         //List of components that is owned by the entity.
         std::vector<Component*> ListOfComponents;
+        Scene* scene = nullptr;
+        EntityID ID;
+        Entity::Entity(EntityID entityID, Scene* scene) : ID(entityID),scene(scene)
+        {
+        }
+
+        Scene *getScene() const {
+            return scene;
+        }
+
+        void setScene(Scene *scene) {
+            Entity::scene = scene;
+        }
 
         //Adds component to the entity and returns true if added.
         template<class T>
@@ -30,6 +44,8 @@ namespace CGEngine {
                     return nullptr;
             }
             T* comp = new T();
+            comp->setEntityId(this->ID);
+            comp->entity=this;
             ListOfComponents.push_back(comp);
             return comp;
         }

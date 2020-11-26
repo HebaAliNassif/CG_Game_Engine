@@ -1,12 +1,15 @@
-#include <application.h>
+/*#include <application.h>
 #include <shader.h>
 #include <irrKlang.h>
 #include <iostream>
 #include <ecs/entity.h>
 #include <transform.h>
+#include <scene.h>
 #include <camera.h>
-
+#include "debug.h"
 using namespace irrklang;
+
+
 
 class MainScrean : public CGEngine::Application {
     Shader program ;
@@ -77,16 +80,56 @@ class MainScrean : public CGEngine::Application {
 };
 using namespace CGEngine ;
 
+void printTransformInfo(Transform* T) {
+    std::cout << "Local To World Matrix: " << "\n";
+    PrintMat4x4(T->getLocalToWorldMatrix());
+
+    std::cout << "World To Local Matrix: " << "\n";
+    PrintMat4x4(T->getWorldToLocalMatrix());
+
+    std::cout << "Position: ";
+    PrintVector3(T->getPosition());
+
+    std::cout << "Local Position: ";
+    PrintVector3(T->getLocalPosition());
+}
+    /*std::cout<<"Rotation: ";
+    std::cout<<T->getLocalEulerAngles().x<<"  "<<T->getLocalEulerAngles().y<<"  "<<T->getLocalEulerAngles().z<<"\n";
+
+    std::cout<<"Scale: ";
+    PrintVector3(T->getLocalScale());
+}
+
 // Example Entry point
 int main(int argc, char** argv) {
+    Scene World;
 
-    Entity shape;
-    shape.addComponent<Transform>();
-    shape.addComponent<Camera>();
+    Entity* shape = World.createEntity("shape");;
+    shape->addComponent<Transform>();
+    shape->addComponent<Camera>();
+    Transform *T =shape->getComponent<Transform>();
 
-    std::cout<<"Shape Count : "<< shape.ListOfComponents.size()<<"\n";
-    shape.destroyComponent<Transform>();
-    std::cout<<"Shape Count After Remove: "<< shape.ListOfComponents.size()<<"\n";
+    Entity* Parent = World.createEntity("parent");;
+    Parent->addComponent<Transform>();
+    Transform *TParent =Parent->getComponent<Transform>();
+    TParent->setPosition(2,2,2);
+    TParent->setLocalScale(5,5,5);
+    //T->setPosition(3,3,3);
+
+
+    std::cout<<"Shape Info: \n";
+    printTransformInfo(T);
+    std::cout<<"ParentShape Info: \n";
+    printTransformInfo(TParent);
+
+    T->setParent(TParent,true);
+
+    std::cout<<"Shape Info: (After Parenting)\n";
+    printTransformInfo(T);
+    std::cout<<"ParentShape Info: (After Parenting)\n";
+    printTransformInfo(TParent);
+    return 0;
     // Creates an instance of EmptyWindowApplication and call run on this instance
     return MainScrean().run();
 }
+*/

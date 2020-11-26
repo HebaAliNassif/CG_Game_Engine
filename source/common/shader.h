@@ -2,7 +2,7 @@
 #ifndef SHADER_H
 #define SHADER_H
 
-#include <application.h>
+#include <application_manager.h>
 #include <map>
 
 class Shader {
@@ -33,7 +33,11 @@ public:
     void set(const std::string &uniform, glm::vec3 value, bool useShader = false) ;
     void set(const std::string &uniform, glm::vec4 value, bool useShader = false);
     void set(const std::string &uniform, glm::mat4 value, GLboolean transpose = false, bool useShader = false);
-
+    void destroy() {
+        //Delete Shader Program
+        if(programID != 0) glDeleteProgram(programID);
+        programID = 0;
+    }
 
 private:
     std::map<std::string, GLuint> uniform_location_cache;

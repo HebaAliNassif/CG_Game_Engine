@@ -1,24 +1,38 @@
+#pragma once
 #ifndef SCENE_H
 #define SCENE_H
 #include "unordered_map"
 #include "vector"
 #include <ecs/entity.h>
 #include <system.h>
-
+#include <transform.h>
+#include <application_manager.h>
 namespace CGEngine {
+    using EntityID = uint32_t;
     class Scene {
     protected:
         std::unordered_map<std::string,Entity*> ListOfEntities;
+        //std::unordered_map<std::string,System*> ListOfSystems;
+
         std::vector<System*> ListOfSystems;
+        std::vector<Transform*> rootTransforms;
+        EntityID m_LastEntityID = 0;
     public:
+        inline static Scene* current_scene = nullptr;
 
-        void Start();
-        void Update();
+        virtual void start(Application_Manager* manager);
+        virtual void update(double deltaTime);
+        virtual void postUpdate();
+        virtual void onExit();
+        const auto& GetRootTransforms() { return rootTransforms; }
+        void addRootTransform(Transform* t);
+        void removeRootTransform(Transform* t);
 
-        //Adds entity to the scene.
-        Entity* addEntity(std::string name);
 
-        //Returns the specified entity to the scene.
+        //Create an entity and add it to the scene.
+        Entity* createEntity(std::string name);
+
+        //Return the specified entity from the scene.
         Entity* getEntity(std::string name);
 
         //Removes an entity from the scene.
@@ -36,6 +50,8 @@ namespace CGEngine {
             }
             T* system = new T();
             ListOfSystems.push_back(system);
+            system->scene = this;
+            system->onAdded();
             return system;
         }
 
@@ -52,7 +68,7 @@ namespace CGEngine {
             return nullptr;
         }
 
-        //Removes an entity from the scene.
+        //Removes the specified system from the scene.
         template<class T>
         void destroySystem()
         {

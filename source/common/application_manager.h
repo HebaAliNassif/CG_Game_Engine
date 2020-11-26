@@ -1,42 +1,65 @@
-#ifndef APPLICATION_H
-#define APPLICATION_H
-
+#ifndef APPLICATION_MANAGER_H
+#define APPLICATION_MANAGER_H
 #include <glm/vec2.hpp>
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#include <imgui.h>
 
 #include "input/keyboard.h"
 #include "input/mouse.h"
+
+
 namespace CGEngine {
 
+    class Scene;
     // This struct handles window attributes: (title, size, isFullscreen).
-    struct WindowConfiguration {
+    struct WindowConfiguration2 {
         const char* title;
         glm::i16vec2 size;
         bool isFullscreen;
     };
 
+    class Application_Manager {
+    public:
+
+        Application_Manager() = default;
+
+        //double last_frame_time=0;
+        static Application_Manager* GetMainApp();
+        //int GetWidth() const { return m_WindowWidth; }
+        //int GetHeight() const { return m_WindowHeight; }
+
+        Scene* GetScene() const { return current_scene; }
 
 
-class Application {
     protected:
         GLFWwindow * window = nullptr;      // Pointer to the window created by GLFW using "glfwCreateWindow()".
         Keyboard keyboard;                  // Instance of "our" keyboard class that handles keyboard functionalities.
         Mouse mouse;                        // Instance of "our" mouse class that handles mouse functionalities.
+        Scene* current_scene = nullptr;
+        Scene* next_scene = nullptr;
+    public:
+        Scene *getNextScene() const;
+
+        void goToScene(Scene *nextScene);
+
+    protected:
 
         // Virtual functions to be overrode and change the default behaviour of the application
         // according to the example needs.
         virtual void configureOpenGL();                             // This function sets OpenGL Window Hints in GLFW.
-        virtual WindowConfiguration getWindowConfiguration();       // Returns the WindowConfiguration current struct instance.
+        virtual WindowConfiguration2 getWindowConfiguration();       // Returns the WindowConfiguration current struct instance.
         virtual void setupCallbacks();                              // Sets-up the window callback functions from GLFW to our (Mouse/Keyboard) classes.
+
+
 
     public:
         virtual void onInitialize(){}                   // Called once before the game loop.
-        virtual void onImmediateGui(ImGuiIO& io){}      // Called every frame to draw the Immediate GUI (if any).
         virtual void onDraw(double deltaTime){}         // Called every frame in the game loop passing the time taken to draw the frame "Delta time".
         virtual void onDestroy(){}                      // Called once after the game loop ends for house cleaning.
 
+        int init();
+        int run();      // This is the main class function that run the whole application (Initialize, Game loop, House cleaning).
+        int destroy();
 
         // Override these functions to get mouse and keyboard event.
         virtual void onKeyEvent(int key, int scancode, int action, int mods){}
@@ -44,8 +67,6 @@ class Application {
         virtual void onCursorEnterEvent(int entered){}
         virtual void onMouseButtonEvent(int button, int action, int mods){}
         virtual void onScrollEvent(double x_offset, double y_offset){}
-
-        int run();      // This is the main class function that run the whole application (Initialize, Game loop, House cleaning).
 
         // Class Getters.
         GLFWwindow* getWindow(){ return window; }
@@ -70,7 +91,10 @@ class Application {
             return size;
         }
 
-};
-}
 
-#endif //APPLICATION_H
+    };
+
+}
+static CGEngine::Application_Manager *mainApp = nullptr;
+
+#endif //APPLICATION_MANAGER_H

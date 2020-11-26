@@ -1,10 +1,22 @@
+#pragma once
 #ifndef COMPUTER
 #define COMPUTER
 
 namespace CGEngine {
 
     class System {
+    protected:
+        Scene * scene = nullptr;
+
     public:
+        bool enabled = true;
+
+        virtual void onAdded() {}
+        virtual void start() {}
+        virtual void update() {}
+        virtual void postUpdate() {}
+
+        int priority = 0;
         System(){};
         template<class T>
         bool Is() const {

@@ -7,14 +7,14 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 
 #include <camera.h>
-#include <application.h>
+#include <application_manager.h>
 
 namespace CGEngine {
 
     // Allows you to control the camera freely in world space
     class CameraController: public Component {
     private:
-        Application* app;
+        Application_Manager* app;
         Camera* camera;
 
         float yaw, pitch;
@@ -27,7 +27,8 @@ namespace CGEngine {
         bool mouse_locked = false;
 
     public:
-        void initialize(Application* application, Camera* camera){
+        CameraController():Component("CameraController"){};
+        void initialize(Application_Manager* application, Camera* camera){
             this->app = application;
             this->camera = camera;
             yaw_sensitivity = pitch_sensitivity = 0.01f;
@@ -71,7 +72,7 @@ namespace CGEngine {
             fov = glm::clamp(fov, glm::pi<float>() * 0.01f, glm::pi<float>() * 0.99f);
             camera->setVerticalFieldOfView(fov);
 
-            glm::vec3 front = camera->Forward(), up = camera->Up(), right = camera->Right();
+            glm::vec3 front = camera->getCameraTransform()->getForward(), up = camera->getCameraTransform()->getUp(), right = camera->getCameraTransform()->getRight();
 
             glm::vec3 current_sensitivity = this->position_sensitivity;
             if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= speedup_factor;

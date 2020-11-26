@@ -4,7 +4,8 @@
 #include "ecs/component.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
-
+#include <entity.h>
+#include <iostream>
 namespace CGEngine {
     // An enum for the camera projection type
     enum struct CameraType {
@@ -17,10 +18,14 @@ namespace CGEngine {
         Camera():Component("camera"){
             dirtyFlags = V_DIRTY | P_DIRTY | VP_DIRTY;
             up = {0, 1, 0};
+
+            //camera_transform = this->getEntityId()->getComponent<Transform>();
+            //camera_transform->setup();
         }
 
         // Setup the camera as a perspective camera
         void setupPerspective(float field_of_view_y, float aspect_ratio, float near, float far){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             this->type = CameraType::Perspective;
             this->field_of_view_y = field_of_view_y;
             this->aspect_ratio = aspect_ratio;
@@ -31,6 +36,7 @@ namespace CGEngine {
 
         // Setup the camera as an orthographic camera
         void setupOrthographic(float orthographic_height, float aspect_ratio, float near, float far){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             this->type = CameraType::Orthographic;
             this->orthographic_height = orthographic_height;
             this->aspect_ratio = aspect_ratio;
@@ -40,61 +46,84 @@ namespace CGEngine {
         }
 
         void setType(CameraType _type){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(this->type != _type){
                 dirtyFlags |= P_DIRTY | VP_DIRTY;
                 this->type = _type;
             }
         }
         void setOrthographicSize(float orthographic_height){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(this->orthographic_height != orthographic_height){
                 dirtyFlags |= P_DIRTY | VP_DIRTY;
                 this->orthographic_height = orthographic_height;
             }
         }
         void setVerticalFieldOfView(float field_of_view_y){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(this->field_of_view_y != field_of_view_y){
                 dirtyFlags |= P_DIRTY | VP_DIRTY;
                 this->field_of_view_y = field_of_view_y;
             }
         }
         void setAspectRatio(float aspect_ratio){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(this->aspect_ratio != aspect_ratio){
                 dirtyFlags |= P_DIRTY | VP_DIRTY;
                 this->aspect_ratio = aspect_ratio;
             }
         }
         void setNearPlane(float near){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(this->near != near){
                 dirtyFlags |= P_DIRTY | VP_DIRTY;
                 this->near = near;
             }
         }
         void setFarPlane(float far){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(this->far != far){
                 dirtyFlags |= P_DIRTY | VP_DIRTY;
                 this->far = far;
             }
         }
         void setEyePosition(glm::vec3 eye){
-            if(this->eye != eye){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            /*if(this->eye != eye){
                 dirtyFlags |= V_DIRTY | VP_DIRTY;
                 this->eye = eye;
+            }*/
+            if(this->camera_transform->getPosition() != eye){
+                dirtyFlags |= V_DIRTY | VP_DIRTY;
+                this->camera_transform->setPosition(eye);
             }
         }
         void setDirection(glm::vec3 direction){
-            if(this->direction != direction){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            /*if(this->direction != direction){
                 dirtyFlags |= V_DIRTY | VP_DIRTY;
                 this->direction = direction;
+            }*/
+            if(this->camera_transform->getForward() != direction){
+                dirtyFlags |= V_DIRTY | VP_DIRTY;
+                this->camera_transform->setForward(direction);
             }
         }
         void setTarget(glm::vec3 target){
-            glm::vec3 direction = target - eye;
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            /*glm::vec3 direction = target - eye;
             if(this->direction != direction){
                 dirtyFlags |= V_DIRTY | VP_DIRTY;
                 this->direction = direction;
+            }*/
+            glm::vec3 direction = target - this->camera_transform->getPosition();
+            if(this->camera_transform->getForward() != direction){
+                dirtyFlags |= V_DIRTY | VP_DIRTY;
+                this->camera_transform->setForward(direction);
             }
         }
         void setUp(glm::vec3 up){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(this->up != up){
                 dirtyFlags |= V_DIRTY | VP_DIRTY;
                 this->up = up;
@@ -102,6 +131,7 @@ namespace CGEngine {
         }
 
         glm::mat4 getProjectionMatrix(){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(dirtyFlags & P_DIRTY){ // Only regenerate the projection matrix if its flag is dirty
                 if(type == CameraType::Orthographic){
                     float half_height = orthographic_height * 0.5f;
@@ -116,14 +146,18 @@ namespace CGEngine {
         }
 
         glm::mat4 getViewMatrix(){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(dirtyFlags & V_DIRTY){ // Only regenerate the view matrix if its flag is dirty
-                V = glm::lookAt(eye, eye + direction, up);
+                //V = glm::lookAt(eye, eye + direction, up);
+                V = glm::lookAt(this->camera_transform->getPosition(), this->camera_transform->getPosition() + this->camera_transform->getForward(), this->camera_transform->getUp());
                 dirtyFlags &= ~V_DIRTY; // V is no longer dirty
             }
+
             return V;
         }
 
         glm::mat4 getVPMatrix(){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
             if(dirtyFlags & VP_DIRTY){
                 VP = getProjectionMatrix() * getViewMatrix();
                 // Note that we called the functions getProjectionMatrix & getViewMatrix instead of directly using V & P
@@ -133,7 +167,9 @@ namespace CGEngine {
             return VP;
         }
 
-        CameraType getType(){return type;}
+        CameraType getType(){
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            return type;}
         [[nodiscard]] float getVerticalFieldOfView() const {return field_of_view_y;}
         [[nodiscard]] float getHorizontalFieldOfView() const {return field_of_view_y * aspect_ratio;}
         [[nodiscard]] float getOrthographicHeight() const {return orthographic_height;}
@@ -141,10 +177,16 @@ namespace CGEngine {
         [[nodiscard]] float getAspectRatio() const {return aspect_ratio;}
         [[nodiscard]] float getNearPlane() const {return near;}
         [[nodiscard]] float getFarPlane() const {return far;}
-        [[nodiscard]] glm::vec3 getEyePosition() const {return eye;}
-        [[nodiscard]] glm::vec3 getDirection() const {return direction;}
-        [[nodiscard]] glm::vec3 getOriginalUp() const {return up;}
-
+        [[nodiscard]] glm::vec3 getEyePosition()  {/*return eye;*/
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            return this->camera_transform->getPosition();}
+        [[nodiscard]] glm::vec3 getDirection()  {/*return direction;*/
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            return this->camera_transform->getForward();}
+        [[nodiscard]] glm::vec3 getOriginalUp()  {/*return up;*/
+            if(camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            return this->camera_transform->getUp();}
+/*
         // Get the directions of the camera coordinates in the world space
         glm::vec3 Right(){
             getViewMatrix();
@@ -170,7 +212,7 @@ namespace CGEngine {
             getViewMatrix();
             return {V[0][2],V[1][2],V[2][2]};
         }
-
+*/
         // Transform point from world space to normalized device coordinates
         glm::vec3 fromWorldToDeviceSpace(glm::vec3 world){
             glm::vec4 clip = getVPMatrix() * glm::vec4(world, 1.0f);
@@ -184,6 +226,9 @@ namespace CGEngine {
             return glm::vec3(clip)/clip.w;
             // Note that we must divide by w even though we not going to the NDC space. This is because of the projection matrix.
         }
+        Transform *getCameraTransform() const {
+            return camera_transform;
+        }
 
     private:
     // Dirty Flags are programming pattern where we only regenerate some output if:
@@ -194,9 +239,11 @@ namespace CGEngine {
     uint8_t dirtyFlags = 0;
 
     // The camera position, camera forward direction and camera up direction
-    glm::vec3 eye = {0, 0, 0}, direction = {0, 0, -1}, up = {0, 1, 0};
+    glm::vec3 /*eye = {0, 0, 0}, direction = {0, 0, -1},*/ up = {0, 1, 0};
+    Transform* camera_transform;
 
-    CameraType type = CameraType::Perspective;
+    private:
+        CameraType type = CameraType::Perspective;
 
     // The field_of_view_y is in radians and is only used for perspective cameras
     // The orthographic_height is only used for orthographic cameras
