@@ -12,7 +12,7 @@
 namespace CGEngine {
 
     // Allows you to control the camera freely in world space
-    class CameraController: public Component {
+    class CameraController: public System {
     private:
         Application_Manager* app;
         Camera* camera;
@@ -27,7 +27,7 @@ namespace CGEngine {
         bool mouse_locked = false;
 
     public:
-        CameraController():Component("CameraController"){};
+        CameraController(){};
         void initialize(Application_Manager* application, Camera* camera){
             this->app = application;
             this->camera = camera;
