@@ -131,5 +131,31 @@ int main(int argc, char** argv) {
     return 0;
     // Creates an instance of EmptyWindowApplication and call run on this instance
     return MainScrean().run();
+    }
+        Scene World;
+    Entity* shape = World.createEntity("shape");;
+    Transform* T = shape->addComponent<Transform>();
+
+    //T->rotate(glm::vec3(1,1,0),45.0f);
+    //printTransformInfo(T);
+   std::cout<<"Up vector: ";
+    PrintVector3(T->getUp());
+    std::cout<<"Forward vector: ";
+    PrintVector3(T->getForward());
+    std::cout<<"Right vector: ";
+    PrintVector3(T->getRight());
+    printTransformInfo(T);
+
+    glm::vec3 myVector=glm::vec3 (1.0f,1.0f,1.0f);
+    T->setUp(myVector);
+
+    std::cout<<"Up vector: ";
+    PrintVector3(T->getUp());
+    std::cout<<"Forward vector: ";
+    PrintVector3(T->getForward());
+    std::cout<<"Right vector: ";
+    PrintVector3(T->getRight());
+    printTransformInfo(T);
+    return 0;
 }
 */

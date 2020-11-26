@@ -6,15 +6,15 @@ namespace CGEngine {
 
     class System {
     protected:
-        Scene * scene = nullptr;
 
     public:
         bool enabled = true;
+        Scene * scene = nullptr;
 
-        virtual void onAdded() {}
         virtual void start() {}
-        virtual void update() {}
-        virtual void postUpdate() {}
+        virtual void onAdded() {}
+        virtual void update(double delta_time) {}
+        virtual void onExit() {}
 
         int priority = 0;
         System(){};

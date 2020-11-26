@@ -19,7 +19,12 @@ namespace CGEngine
             Entity* shape = createEntity("shape");
             shape->addComponent<Transform>();
             shape->addComponent<Camera>();
-            shape->addComponent<CameraController>();
+           // addSystem<CameraController>();
+
+           /* shape->getComponent<Camera>()->setEyePosition({10, 10, 10});
+            shape->getComponent<Camera>()->setTarget({0, 0, 0});
+            shape->getComponent<Camera>()->setUp({0, 1, 0});*/
+
         }
         void  start(Application_Manager* manager) override
         {
@@ -31,44 +36,30 @@ namespace CGEngine
             glfwGetFramebufferSize(manager->getWindow(), &width, &height);
 
             Entity* E = this->getEntity("shape");
-
-            E->getComponent<Camera>()->setEyePosition({10, 10, 10});
-
-            E->getComponent<Camera>()->setTarget({0, 0, 0});
-            E->getComponent<Camera>()->setUp({0, 1, 0});
             E->getComponent<Camera>()->setupPerspective(glm::pi<float>()/2, static_cast<float>(width)/height, 0.1f, 100.0f);
-
-            E->getComponent<CameraController>()->initialize(manager, E->getComponent<Camera>());
-            glClearColor(0, 0, 0, 0);
+            //getSystem<CameraController>()->initialize(manager, E->getComponent<Camera>());
 
         }
         void update(double deltaTime) override  {
 
             Entity* E = this->getEntity("shape");
-            E->getComponent<CameraController>()->update(deltaTime);
+            //E->getComponent<CameraController>()->update(deltaTime);
 
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             glUseProgram(program.programID);
 
             program.set("tint", glm::vec4(1,1,1,1));
 
             for(const auto& object : objects) {
-                glm::mat4 mat=object.to_mat4();
+                glm::mat4 mat= object.to_mat4();
                 program.set("transform", E->getComponent<Camera>()->getVPMatrix() * mat);
                 model.draw();
             }
-
-            //NOTE: Remember to reset the color mask such that ImGUI can draw
-            glColorMask(true, true, true, true);
         }
         void onExit() override
         {
             program.destroy();
             model.destroy();
             //camera_controller.release();
-            //At the start of frame we want to clear the screen. Otherwise we would still see the results from the previous frame.
-            glLoadIdentity();
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         }
         ~scene1()
         {

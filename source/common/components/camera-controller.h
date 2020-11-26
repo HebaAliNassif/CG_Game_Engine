@@ -8,7 +8,7 @@
 
 #include <camera.h>
 #include <application_manager.h>
-
+#include <iostream>
 namespace CGEngine {
 
     // Allows you to control the camera freely in world space
@@ -16,6 +16,9 @@ namespace CGEngine {
     private:
         Application_Manager* app;
         Camera* camera;
+
+        Application_Manager* app2;
+        Camera* camera2;
 
         float yaw, pitch;
         glm::vec3 position;
@@ -28,6 +31,13 @@ namespace CGEngine {
 
     public:
         CameraController(){};
+
+        void onAdded() override
+        {
+            camera2 = this->scene->getEntity("Main Camera")->getComponent<Camera>();
+            //initialize(manager, camera2);
+
+        }
         void initialize(Application_Manager* application, Camera* camera){
             this->app = application;
             this->camera = camera;
@@ -49,7 +59,7 @@ namespace CGEngine {
             }
         }
 
-        void update(double delta_time){
+        void update(double delta_time) override{
             if(app->getMouse().isPressed(GLFW_MOUSE_BUTTON_1) && !mouse_locked){
                 app->getMouse().lockMouse(app->getWindow());
                 mouse_locked = true;
@@ -72,7 +82,7 @@ namespace CGEngine {
             fov = glm::clamp(fov, glm::pi<float>() * 0.01f, glm::pi<float>() * 0.99f);
             camera->setVerticalFieldOfView(fov);
 
-            glm::vec3 front = camera->getCameraTransform()->getForward(), up = camera->getCameraTransform()->getUp(), right = camera->getCameraTransform()->getRight();
+            glm::vec3 front = camera->Forward(), up =  camera->Up(), right = camera->Right();
 
             glm::vec3 current_sensitivity = this->position_sensitivity;
             if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= speedup_factor;

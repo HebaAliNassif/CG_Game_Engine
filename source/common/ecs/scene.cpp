@@ -42,7 +42,6 @@ void CGEngine::Scene::removeRootTransform(Transform* t)
 
 void CGEngine::Scene::start(Application_Manager* manager)
 {
-    std::cout<<"Here";
     std::sort(ListOfSystems.begin(), ListOfSystems.end(), [](System* a, System* b) {
         return a->priority < b->priority;
     });
@@ -55,21 +54,33 @@ void CGEngine::Scene::start(Application_Manager* manager)
 
 void CGEngine::Scene::update(double deltaTime)
 {
+
+}
+
+
+void CGEngine::Scene::onExit() {
     for (System* s : ListOfSystems)
     {
         if (s->enabled)
-            s->update();
+            s->onExit();
     }
 }
 
-void CGEngine::Scene::postUpdate()
-{
+void CGEngine::Scene::onDestroy() {
+    glLoadIdentity();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+}
+
+void CGEngine::Scene::preUpdate(double deltaTime) {
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     for (System* s : ListOfSystems)
     {
-        s->postUpdate();
+        if (s->enabled)
+            s->update(deltaTime);
     }
 }
 
-void CGEngine::Scene::onExit() {
-
+void CGEngine::Scene::onStart(Application_Manager* manager) {
+    this->manager=manager;
+    glClearColor(0, 0, 0, 0);
 }

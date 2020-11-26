@@ -34,6 +34,8 @@ namespace CGEngine {
 
         Component(std::string Name) { name = Name; };
 
+        virtual void onAdded(){};
+
         template<class T>
         bool Is() const {
             const T *t = dynamic_cast<const T *>(this);

@@ -249,7 +249,8 @@ int CGEngine::Application_Manager::run() {
     setupCallbacks();
     keyboard.enable(window);
     mouse.enable(window);
-
+    glGenVertexArrays(1, &vertex_array);
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
     onInitialize();
 
     double last_frame_time = glfwGetTime();
@@ -261,6 +262,7 @@ int CGEngine::Application_Manager::run() {
 
             if (current_scene != nullptr) {
                 current_scene->onExit();
+                current_scene->onDestroy();
             }
             current_scene = next_scene;
             next_scene = nullptr;
@@ -276,11 +278,11 @@ int CGEngine::Application_Manager::run() {
 
             // Get the current time (the time at which we are starting the current frame).
             double current_frame_time = glfwGetTime();
+            this->current_scene->preUpdate(current_frame_time - last_frame_time);
             this->current_scene->update(current_frame_time - last_frame_time);
             // Call onDraw, in which we will draw the current frame, and send to it the time difference between the last and current frame
             onDraw(current_frame_time - last_frame_time);
             last_frame_time = current_frame_time; // Then update the last frame start time (this frame is now the last frame)
-            this->current_scene->postUpdate();
 #if defined(ENABLE_OPENGL_DEBUG_MESSAGES)
             // Since ImGui causes many messages to be thrown, we are temporarily disabling the debug messages till we render the ImGui
             glDisable(GL_DEBUG_OUTPUT);

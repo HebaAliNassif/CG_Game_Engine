@@ -50,6 +50,7 @@ namespace CGEngine {
         virtual WindowConfiguration2 getWindowConfiguration();       // Returns the WindowConfiguration current struct instance.
         virtual void setupCallbacks();                              // Sets-up the window callback functions from GLFW to our (Mouse/Keyboard) classes.
 
+        GLuint vertex_array = 0;
 
 
     public:

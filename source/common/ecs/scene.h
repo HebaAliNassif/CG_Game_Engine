@@ -10,6 +10,8 @@
 namespace CGEngine {
     using EntityID = uint32_t;
     class Scene {
+    private:
+        Application_Manager* manager;
     protected:
         std::unordered_map<std::string,Entity*> ListOfEntities;
         //std::unordered_map<std::string,System*> ListOfSystems;
@@ -22,8 +24,11 @@ namespace CGEngine {
 
         virtual void start(Application_Manager* manager);
         virtual void update(double deltaTime);
-        virtual void postUpdate();
         virtual void onExit();
+
+        void onStart(Application_Manager* manager);
+        void preUpdate(double deltaTime);
+        void onDestroy();
         const auto& GetRootTransforms() { return rootTransforms; }
         void addRootTransform(Transform* t);
         void removeRootTransform(Transform* t);
@@ -52,6 +57,7 @@ namespace CGEngine {
             ListOfSystems.push_back(system);
             system->scene = this;
             system->onAdded();
+
             return system;
         }
 

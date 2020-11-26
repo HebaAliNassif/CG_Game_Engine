@@ -1,5 +1,6 @@
 #include "transform.h"
 #include "ecs/scene.h"
+
 //Returns the position of the transform in world space.
 glm::vec3 CGEngine::Transform::getPosition() const {
 
@@ -129,24 +130,12 @@ void CGEngine::Transform::setRight(const glm::vec3 &right)
 //Sets the Y axis of the transform in world space.
 void CGEngine::Transform::setUp(const glm::vec3 &up)
 {
-    glm::vec3 up_normal = glm::normalize(up);
-    glm::vec3 up_current_normal =  glm::normalize(this->getUp());
-
-    glm::vec3 forward_current_normal= glm::normalize(getForward());
-
-    float angle = glm::angle(up_normal,up_current_normal);
-    std::cout<<"angle   "<<glm::degrees(angle)<<"\n";
-
-    forward_current_normal=glm::rotate(up_current_normal,glm::radians(180-glm::degrees(angle)),getRight());
-
-    angle = glm::angle(forward_current_normal,up_current_normal);
-    std::cout<<"angle   "<<glm::degrees(angle)<<"\n";
-
-    angle = glm::angle(forward_current_normal,up_normal);
-    std::cout<<"angle   "<<glm::degrees(angle)<<"\n";
-
-    glm::quat qua=glm::quatLookAt(forward_current_normal, up);
+    glm::vec3 upVector = this->getUp();
+    glm::vec3 upNew = glm::normalize(up);
+    glm::vec3 forwardNew = glm::normalize(getForward());
+    glm::quat qua=glm::quatLookAt(upNew, forwardNew);
     this->setRotation(qua);
+
 }
 
 //Returns the rotation of the transform in world space stored as a Quaternion.
