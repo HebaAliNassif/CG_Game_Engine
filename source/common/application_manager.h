@@ -22,6 +22,11 @@ namespace CGEngine {
     public:
 
         Application_Manager() = default;
+        static inline   Application_Manager *mainApp ;
+
+        static Application_Manager *getMainApp();
+
+        static void setMainApp(Application_Manager *mainApp);
 
         //double last_frame_time=0;
         static Application_Manager* GetMainApp();
@@ -95,7 +100,7 @@ namespace CGEngine {
 
     };
 
+
 }
-static CGEngine::Application_Manager *mainApp = nullptr;
 
 #endif //APPLICATION_MANAGER_H

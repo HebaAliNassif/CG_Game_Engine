@@ -1,6 +1,6 @@
 #ifndef COMPUTER_GRAPHICS_PROJECT_CAMERA_TEST_H
 #define COMPUTER_GRAPHICS_PROJECT_CAMERA_TEST_H
-
+#include <application_manager.h>
 #include "ecs/component.h"
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
@@ -47,6 +47,12 @@ namespace CGEngine {
         void onAdded() override
         {
             if(!camera_transform)camera_transform =this->getEntity()->getComponent<Transform>();
+            Application_Manager* app= CGEngine::Application_Manager::getMainApp();
+            if(app!=nullptr)std::cout<<"Yay";
+            else std::cout<<"Nay";
+            int width, height;
+            glfwGetFramebufferSize(app->getWindow(), &width, &height);
+            this->setupPerspective(glm::pi<float>()/2, static_cast<float>(width)/height, 0.1f, 100.0f);
         }
 
         // Setup the camera as a perspective camera

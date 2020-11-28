@@ -99,7 +99,10 @@ void GLAPIENTRY opengl_callback(GLenum source, GLenum type, GLuint id, GLenum se
     std::cout << "OpenGL Debug Message " << id << " (type: " << _type << ") of " << _severity
               << " raised from " << _source << ": " << message << std::endl;
 }
-
+/*
+static CGEngine::Application_Manager *GetMainApp() {
+    return CGEngine::mainApp;
+}*/
 void CGEngine::Application_Manager::configureOpenGL() {
     // Request that OpenGL is 3.3
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -200,6 +203,7 @@ int CGEngine::Application_Manager::init() {
 
 // This is the main class function that run the whole application (Initialize, Game loop, House cleaning).
 int CGEngine::Application_Manager::run() {
+    mainApp = this;
 
     // Set the function to call when an error occurs.
     glfwSetErrorCallback(glfw_error_callback);
@@ -254,7 +258,6 @@ int CGEngine::Application_Manager::run() {
     onInitialize();
 
     double last_frame_time = glfwGetTime();
-    mainApp = this;
     //this->current_scene->start();
     while (!glfwWindowShouldClose(window)) {
 
@@ -401,8 +404,14 @@ void CGEngine::Application_Manager::goToScene(CGEngine::Scene *nextScene) {
     next_scene = nextScene;
 }
 
-CGEngine::Application_Manager *CGEngine::Application_Manager::GetMainApp() {
+CGEngine::Application_Manager *CGEngine::Application_Manager::getMainApp() {
     return mainApp;
 }
+
+void CGEngine::Application_Manager::setMainApp(CGEngine::Application_Manager *mainApp) {
+    Application_Manager::mainApp = mainApp;
+}
+
+
 
 

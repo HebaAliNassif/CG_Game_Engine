@@ -56,10 +56,10 @@ namespace CGEngine {
                 : Component("transform"), position(position), rotation(rotation), scale(scale) {};
 
         //Matrix that transforms a point from local space into world space.
-        const glm::mat4 &getLocalToWorldMatrix() const;
+        const glm::mat4 getLocalToWorldMatrix() const;
 
         //Matrix that transforms a point from world space into local space.
-        const glm::mat4 &getWorldToLocalMatrix() const;
+        const glm::mat4 getWorldToLocalMatrix() const;
 
 
         //Returns the position of the transform in world space.
@@ -107,10 +107,10 @@ namespace CGEngine {
         //TODO
         //Implement those two functions
         //Sets the X axis of the transform in world space.
-        void setRight(const glm::vec3 &right);
+        //void setRight(const glm::vec3 &right);
 
         //Sets the Y axis of the transform in world space.
-        void setUp(const glm::vec3 &up);
+        //void setUp(const glm::vec3 &up);
 
         //Sets the Z axis of the transform in world space.
         void setForward(const glm::vec3 &forward);

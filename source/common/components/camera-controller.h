@@ -17,8 +17,7 @@ namespace CGEngine {
         Application_Manager* app;
         Camera* camera;
 
-        Application_Manager* app2;
-        Camera* camera2;
+
 
         float yaw, pitch;
         glm::vec3 position;
@@ -34,13 +33,14 @@ namespace CGEngine {
 
         void onAdded() override
         {
-            camera2 = this->scene->getEntity("Main Camera")->getComponent<Camera>();
-            //initialize(manager, camera2);
+            camera = this->scene->getEntity("Main Camera")->getComponent<Camera>();
+            app = CGEngine::Application_Manager::getMainApp();
+            initialize(app, camera);
 
         }
         void initialize(Application_Manager* application, Camera* camera){
-            this->app = application;
-            this->camera = camera;
+            //this->app = application;
+            //this->camera = camera;
             yaw_sensitivity = pitch_sensitivity = 0.01f;
             position_sensitivity = {3.0f, 3.0f, 3.0f};
             fov_sensitivity = glm::pi<float>()/10;

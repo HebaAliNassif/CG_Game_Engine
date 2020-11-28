@@ -13,7 +13,7 @@
 using namespace irrklang;
 
 class manager : public CGEngine::Application_Manager {
-
+    int scene=1;
     CGEngine::WindowConfiguration2 getWindowConfiguration() override {
         return {"Scene", {1280, 720}, false};
     }
@@ -22,20 +22,24 @@ class manager : public CGEngine::Application_Manager {
     void onInitialize() override {
         CGEngine::Scene *scene2 = new CGEngine::scene2();
         goToScene(scene2);
+        scene=2;
     }
 
 
     // onDraw(deltaTime) function is called every frame
     void onDraw(double deltaTime) override {
+
     }
 
     void onKeyEvent(int key, int scancode, int action, int mods) override {
-        if (scancode == 79 || scancode == 2) {
+        if ((scancode == 79 || scancode == 2) && scene!=2) {
             CGEngine::Scene *scene2 = new CGEngine::scene2();
             goToScene(scene2);
-        } else if (scancode == 80 || scancode == 3) {
+            scene=2;
+        } else if ((scancode == 80 || scancode == 3) && scene!=1) {
             CGEngine::Scene *scene1 = new CGEngine::scene1();
             goToScene(scene1);
+            scene=1;
         }
 
     }
@@ -63,29 +67,4 @@ void printTransformInfo(Transform *T) {
 
 int main(int argc, char **argv) {
     return manager().run();
-    Scene World;
-    Entity *shape = World.createEntity("shape");;
-    Transform *T = shape->addComponent<Transform>();
-
-//T->rotate(glm::vec3(1,1,0),45.0f);
-//printTransformInfo(T);
-   std::cout << "Up vector: ";
-    PrintVector3(T->getUp());
-    std::cout << "Forward vector: ";
-    PrintVector3(T->getForward());
-    std::cout << "Right vector: ";
-    PrintVector3(T->getRight());
-    printTransformInfo(T);
-
-    glm::vec3 myVector = glm::vec3(0.0f, 0.0f, 1.0f);
-    T->setUp(myVector);
-
-    std::cout << "Up vector: ";
-    PrintVector3(T->getUp());
-    std::cout << "Forward vector: ";
-    PrintVector3(T->getForward());
-    std::cout << "Right vector: ";
-    PrintVector3(T->getRight());
-    printTransformInfo(T);
-    return 0;
 }
