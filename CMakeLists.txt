@@ -39,7 +39,7 @@ set(COMMON_SOURCES
         scenes/scene1.cpp
         scenes/scene2.cpp
         source/common/mesh/mesh-utils.cpp
-        )
+        source/common/renderSystem.cpp source/common/renderSystem.h source/common/components/MeshC.cpp source/common/components/MeshC.h)
 
 
 include_directories(

@@ -21,6 +21,16 @@ class manager : public CGEngine::Application_Manager {
     // onInitialize() function is called once before the application loop
     void onInitialize() override {
         CGEngine::Scene *scene2 = new CGEngine::scene2();
+        glClearColor(0, 0, 0, 0);
+
+        glEnable(GL_DEPTH_TEST);
+        glDepthFunc(GL_LEQUAL);
+
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        glFrontFace(GL_CCW);
+
+        glClearColor(0, 0, 0, 1);
         goToScene(scene2);
         scene=2;
     }
