@@ -13,13 +13,14 @@ namespace CGEngine {
     private:
         Application_Manager* manager;
     protected:
+
+        EntityID m_LastEntityID = 0;
+    public:
         std::unordered_map<std::string,Entity*> ListOfEntities;
         //std::unordered_map<std::string,System*> ListOfSystems;
 
         std::vector<System*> ListOfSystems;
         std::vector<Transform*> rootTransforms;
-        EntityID m_LastEntityID = 0;
-    public:
         inline static Scene* current_scene = nullptr;
 
         virtual void start(Application_Manager* manager);

@@ -2,7 +2,7 @@
 #include <shader.h>
 #include "iostream"
 #include <mesh.h>
-#include <camera-controller.h>
+#include <systems/camera-controller.h>
 #include <mesh-utils.hpp>
 #include <application_manager.h>
 #include <camera.h>

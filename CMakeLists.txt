@@ -39,13 +39,14 @@ set(COMMON_SOURCES
         scenes/scene1.cpp
         scenes/scene2.cpp
         source/common/mesh/mesh-utils.cpp
-        source/common/renderSystem.cpp source/common/renderSystem.h source/common/components/MeshC.cpp source/common/components/MeshC.h)
+        source/common/components/MeshC.cpp )
 
 
 include_directories(
         source/common
         source/common/components
         source/common/mesh
+        source/common/systems
         source/common/ecs
         vendor/glfw/include
         vendor/glad/include
