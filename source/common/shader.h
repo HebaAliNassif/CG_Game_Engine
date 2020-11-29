@@ -4,7 +4,7 @@
 
 #include <application_manager.h>
 #include <map>
-
+#include <string>
 class Shader {
 
 public:

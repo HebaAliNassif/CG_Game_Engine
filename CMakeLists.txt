@@ -38,7 +38,6 @@ set(COMMON_SOURCES
         source/common/ecs/scene.cpp
         scenes/scene1.cpp
         scenes/scene2.cpp
-        source/common/mesh/mesh-utils.cpp
         source/common/components/MeshC.cpp )
 
 

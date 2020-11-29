@@ -12,6 +12,16 @@ namespace CGEngine
         RenderSystem(){};
         void update(double delta_time) override
         {
+            glClearColor(0, 0, 0, 0);
+
+            glEnable(GL_DEPTH_TEST);
+            glDepthFunc(GL_LEQUAL);
+
+            glEnable(GL_CULL_FACE);
+            glCullFace(GL_BACK);
+            glFrontFace(GL_CCW);
+
+            glClearColor(0, 0, 0, 1);
             std::unordered_map<std::string,Entity*> ListOfEntities = this->scene->ListOfEntities;
             for (auto entity : ListOfEntities)
             {

@@ -9,10 +9,29 @@
 #include <functional>
 #include <iostream>
 #include <cassert>
+#include <unordered_map>
+#include <filesystem>
+
+#include <tinyobj/tiny_obj_loader.h>
+
+
+#include "common-vertex-types.hpp"
+#include "common-vertex-attributes.hpp"
 
 #include <glad/gl.h>
 
 #include "vertex-attributes.h"
+
+#define WHITE   CGEngine::Color(255, 255, 255, 255)
+#define GRAY    CGEngine::Color(128, 128, 128, 255)
+#define BLACK   CGEngine::Color(  0,   0,   0, 255)
+#define RED     CGEngine::Color(255,   0,   0, 255)
+#define GREEN   CGEngine::Color(  0, 255,   0, 255)
+#define BLUE    CGEngine::Color(  0,   0, 255, 255)
+#define MAGENTA CGEngine::Color(255,   0, 255, 255)
+#define YELLOW  CGEngine::Color(255, 255,   0, 255)
+#define CYAN    CGEngine::Color(  0, 255, 255, 255)
+
 
 namespace CGEngine {
 
@@ -244,6 +263,143 @@ namespace CGEngine {
         //So if we copied the object, one of them can destroy the object(s) while the other still thinks they are valid.
         Mesh(Mesh const &) = delete;
         Mesh &operator=(Mesh const &) = delete;
+
+
+        //draw sphere
+        void Sphere(Mesh& mesh,
+                    const glm::ivec2& segments = {32, 16},
+                    bool colored = false,
+                    const glm::vec3& center = {0,0,0},
+                    float radius = 0.5f,
+                    const glm::vec2& texture_offset = {0, 0},
+                    const glm::vec2& texture_tiling = {1, 1}){
+
+            std::vector<CGEngine::Vertex> vertices;
+            std::vector<GLuint> elements;
+
+            // We populate the sphere vertices by looping over its longitude and latitude
+            for(int lat = 0; lat <= segments.y; lat++){
+                float v = (float)lat / segments.y;
+                float pitch = v * glm::pi<float>() - glm::half_pi<float>();
+                float cos = glm::cos(pitch), sin = glm::sin(pitch);
+                for(int lng = 0; lng <= segments.x; lng++){
+                    float u = (float)lng/segments.x;
+                    float yaw = u * glm::two_pi<float>();
+                    glm::vec3 normal = {cos * glm::cos(yaw), sin, cos * glm::sin(yaw)};
+                    glm::vec3 position = radius * normal + center;
+                    glm::vec2 tex_coords = texture_tiling * glm::vec2(u, v) + texture_offset;
+                    CGEngine::Color color = colored ? CGEngine::Color(127.5f * (normal + 1.0f), 255) : WHITE;
+                    vertices.push_back({position, color, tex_coords, normal});
+                }
+            }
+
+            for(int lat = 1; lat <= segments.y; lat++){
+                int start = lat*(segments.x+1);
+                for(int lng = 1; lng <= segments.x; lng++){
+                    int prev_lng = lng-1;
+                    elements.push_back(lng + start);
+                    elements.push_back(lng + start - segments.x - 1);
+                    elements.push_back(prev_lng + start - segments.x - 1);
+                    elements.push_back(prev_lng + start - segments.x - 1);
+                    elements.push_back(prev_lng + start);
+                    elements.push_back(lng + start);
+                }
+            }
+
+            // Create and populate the OpenGL objects in the mesh
+            if (mesh.isCreated()) mesh.destroy();
+            mesh.create({CGEngine::setup_buffer_accessors<Vertex>});
+            mesh.setVertexData(0, vertices);
+            mesh.setElementData(elements);
+        }
+        //draw cuboid
+        void Cuboid(Mesh& mesh, bool colored_faces = false,
+                    const glm::vec3& center = {0,0,0},
+                    const glm::vec3& size = {1,1,1},
+                    const glm::vec2& texture_offset = {0, 0},
+                    const glm::vec2& texture_tiling = {1, 1}){
+
+                // These are just temporary variables that will help us populate the vertex array
+                glm::vec3 half_size = size * 0.5f;
+                glm::vec3 bounds[] = {center - half_size, center + half_size};
+                glm::vec3 corners[] = {
+                        {bounds[0].x, bounds[0].y, bounds[0].z},
+                        {bounds[0].x, bounds[0].y, bounds[1].z},
+                        {bounds[0].x, bounds[1].y, bounds[0].z},
+                        {bounds[0].x, bounds[1].y, bounds[1].z},
+                        {bounds[1].x, bounds[0].y, bounds[0].z},
+                        {bounds[1].x, bounds[0].y, bounds[1].z},
+                        {bounds[1].x, bounds[1].y, bounds[0].z},
+                        {bounds[1].x, bounds[1].y, bounds[1].z}
+                };
+                glm::vec2 tex_coords[] = {
+                        texture_offset,
+                        texture_offset + glm::vec2(0, texture_tiling.y),
+                        texture_offset + glm::vec2(texture_tiling.x, 0),
+                        texture_offset + texture_tiling
+                };
+                glm::vec3 normals[3][2] = {
+                        {{-1, 0, 0}, {1,0,0}},
+                        {{ 0,-1, 0}, {0,1,0}},
+                        {{ 0, 0,-1}, {0,0,1}}
+                };
+
+
+                // We populate each face with 4 vertices that define it's corners
+                std::vector<Vertex> vertices = {
+                        //Upper Face
+                        {corners[2], colored_faces ? GREEN : WHITE , tex_coords[0], normals[1][1]},
+                        {corners[3], colored_faces ? MAGENTA : WHITE, tex_coords[2], normals[1][1]},
+                        {corners[7], colored_faces ? RED : WHITE, tex_coords[3], normals[1][1]},
+                        {corners[6], colored_faces ? BLUE : WHITE, tex_coords[1], normals[1][1]},
+                        //Lower Face
+                        {corners[0], colored_faces ? GREEN : WHITE, tex_coords[0], normals[1][0]},
+                        {corners[4], colored_faces ? MAGENTA : WHITE, tex_coords[2], normals[1][0]},
+                        {corners[5], colored_faces ? RED : WHITE, tex_coords[3], normals[1][0]},
+                        {corners[1], colored_faces ? BLUE : WHITE, tex_coords[1], normals[1][0]},
+                        //Right Face
+                        {corners[4], colored_faces ? GREEN : WHITE, tex_coords[0], normals[0][1]},
+                        {corners[6], colored_faces ? MAGENTA : WHITE, tex_coords[2], normals[0][1]},
+                        {corners[7], colored_faces ? RED : WHITE, tex_coords[3], normals[0][1]},
+                        {corners[5], colored_faces ? BLUE : WHITE, tex_coords[1], normals[0][1]},
+                        //Left Face
+                        {corners[0], colored_faces ? GREEN : WHITE, tex_coords[0], normals[0][0]},
+                        {corners[1], colored_faces ? MAGENTA : WHITE, tex_coords[2], normals[0][0]},
+                        {corners[3], colored_faces ? RED : WHITE, tex_coords[3], normals[0][0]},
+                        {corners[2], colored_faces ? BLUE : WHITE, tex_coords[1], normals[0][0]},
+                        //Front Face
+                        {corners[1], colored_faces ? GREEN : WHITE, tex_coords[0], normals[2][1]},
+                        {corners[5], colored_faces ? MAGENTA : WHITE, tex_coords[2], normals[2][1]},
+                        {corners[7], colored_faces ? RED : WHITE, tex_coords[3], normals[2][1]},
+                        {corners[3], colored_faces ? BLUE : WHITE, tex_coords[1], normals[2][1]},
+                        //Back Face
+                        {corners[0], colored_faces ? GREEN : WHITE, tex_coords[0], normals[2][0]},
+                        {corners[2], colored_faces ? MAGENTA : WHITE, tex_coords[2], normals[2][0]},
+                        {corners[6], colored_faces ? RED : WHITE, tex_coords[3], normals[2][0]},
+                        {corners[4], colored_faces ? BLUE : WHITE, tex_coords[1], normals[2][0]},
+                };
+                // Then we define the elements for the 2 triangles that define each face
+                std::vector<GLuint> elements = {
+                        //Upper Face
+                        0, 1, 2, 2, 3, 0,
+                        //Lower Face
+                        4, 5, 6, 6, 7, 4,
+                        //Right Face
+                        8, 9, 10, 10, 11, 8,
+                        //Left Face
+                        12, 13, 14, 14, 15, 12,
+                        //Front Face
+                        16, 17, 18, 18, 19, 16,
+                        //Back Face
+                        20, 21, 22, 22, 23, 20,
+                };
+
+                // Create and populate the OpenGL objects in the mesh
+                if (mesh.isCreated()) mesh.destroy();
+                mesh.create({CGEngine::setup_buffer_accessors<Vertex>});
+                mesh.setVertexData(0, vertices);
+                mesh.setElementData(elements);
+            };
 
     };
 

@@ -1,9 +1,7 @@
 #include <scene.h>
 #include <shader.h>
-#include "iostream"
 #include <mesh.h>
 #include <systems/camera-controller.h>
-#include <mesh-utils.hpp>
 #include <application_manager.h>
 #include <camera.h>
 #include <render_system.h>
@@ -14,11 +12,10 @@ namespace CGEngine
     public:
         Shader program;
         Mesh model;
-        std::vector<Transform> objects;
+        Mesh models;
         scene2()
         {
             program = Shader::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","shape1");
-            CGEngine::mesh_utils::Cuboid(model, true);
 
             //Camera Entity
             Entity* camera = createEntity("Main Camera");
@@ -33,8 +30,22 @@ namespace CGEngine
             Entity* shape = createEntity("Shape");
             shape->addComponent<Transform>();
             shape->addComponent<MeshC>();
+            shape->getComponent<MeshC>()->getmesh()-> Cuboid( model, true);
             shape->getComponent<MeshC>()->setmesh(model);
             shape->getComponent<MeshC>()->setProgram(program);
+            shape->getComponent<Transform>()->setLocalPosition({0,0,0});
+            shape->getComponent<Transform>()->setLocalScale({10,13,10});
+
+
+            Entity* sphere = createEntity("sphere");
+            sphere->addComponent<Transform>();
+            sphere->addComponent<MeshC>();
+            sphere->getComponent<MeshC>()->getmesh()-> Sphere( models,{32, 16}, true);
+            sphere->getComponent<MeshC>()->setmesh(models);
+            sphere->getComponent<MeshC>()->setProgram(program);
+            sphere->getComponent<Transform>()->setLocalPosition({5,0,10});
+            sphere->getComponent<Transform>()->setLocalScale({7,7,7});
+
 
             //Systems
             addSystem<CameraController>();
