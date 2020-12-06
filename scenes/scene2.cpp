@@ -6,6 +6,11 @@
 #include <camera.h>
 #include <render_system.h>
 #include <MeshC.h>
+#include <script.h>
+#include <shape_script.cpp>
+#include <script_system.h>
+
+
 namespace CGEngine
 {
     class scene2 : public CGEngine::Scene {
@@ -25,7 +30,6 @@ namespace CGEngine
             camera->getComponent<Camera>()->setTarget({0, 0, 0});
 
 
-
             //Shape Entity
             Entity* shape = createEntity("Shape");
             shape->addComponent<Transform>();
@@ -43,11 +47,11 @@ namespace CGEngine
             sphere->getComponent<MeshC>()->getmesh()-> Sphere( models,{32, 16}, true);
             sphere->getComponent<MeshC>()->setmesh(models);
             sphere->getComponent<MeshC>()->setProgram(program);
-            sphere->getComponent<Transform>()->setLocalPosition({5,0,10});
+            sphere->getComponent<Transform>()->setLocalPosition({0,0,2});
             sphere->getComponent<Transform>()->setLocalScale({7,7,7});
 
-
             //Systems
+            addSystem<ScriptSystem>();
             addSystem<CameraController>();
             addSystem<RenderSystem>();
         }

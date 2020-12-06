@@ -34,11 +34,12 @@ set(COMMON_SOURCES
         source/common/shader.cpp
         source/common/ecs/component.cpp
         source/common/components/transform.cpp
-        source/common/ecs/entity.cpp
         source/common/ecs/scene.cpp
         scenes/scene1.cpp
         scenes/scene2.cpp
-        source/common/components/MeshC.cpp )
+        source/common/components/MeshC.cpp
+        source/scripts/shape_script.cpp
+        )
 
 
 include_directories(
@@ -59,6 +60,7 @@ include_directories(
         lib/libs_64
         lib/libs_86
         scenes
+        source/scripts
 )
 
 

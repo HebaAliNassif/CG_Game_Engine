@@ -1,6 +1,7 @@
 #pragma once
 #ifndef TRANSFORM_H
 #define TRANSFORM_H
+
 #include <glm/gtx/matrix_decompose.hpp>
 #include "ecs/component.h"
 #include <string>
@@ -20,6 +21,9 @@
 #include <iostream>
 #include <glm/gtx/vector_angle.hpp>
 #include <glm/gtx/rotate_vector.hpp>
+#include <iomanip>
+
+
 namespace CGEngine {
 
     enum class Space {
@@ -29,30 +33,29 @@ namespace CGEngine {
 
     class Transform : public Component {
 
-
-
-
     protected:
         glm::vec3 position, scale;
         glm::quat rotation;
-        std::vector<Transform*> children;
+        std::vector<Transform *> children;
         Transform *parent = nullptr;
 
         int rootOrder = 0;
+
         int getRootOrder() const;
+
         void setRootOrder(int rootOrder);
 
         int indexNumber = 0;
 
 
-
     public:
-        [[nodiscard]] glm::mat4 to_mat4() const {
+        glm::mat4 to_mat4() const {
             return glm::translate(glm::mat4(1.0f), position) *
                    glm::mat4_cast(rotation) *
                    glm::scale(glm::mat4(1.0f), scale);
         }
-        Transform(glm::vec3 position = {0, 0, 0}, glm::quat rotation = {0, 0, 0,0}, glm::vec3 scale = {1, 1, 1})
+
+        Transform(glm::vec3 position = {0, 0, 0}, glm::quat rotation = {0, 0, 0, 0}, glm::vec3 scale = {1, 1, 1})
                 : Component("transform"), position(position), rotation(rotation), scale(scale) {};
 
         //Matrix that transforms a point from local space into world space.
@@ -104,19 +107,20 @@ namespace CGEngine {
 
         //Returns the Z axis of the transform in world space.
         glm::vec3 getForward() const;
+
         //TODO
         //Implement those two functions
         //Sets the X axis of the transform in world space.
-        //void setRight(const glm::vec3 &right);
+        void setRight(const glm::vec3 &right);
 
         //Sets the Y axis of the transform in world space.
-        //void setUp(const glm::vec3 &up);
+        void setUp(const glm::vec3 &up);
 
         //Sets the Z axis of the transform in world space.
         void setForward(const glm::vec3 &forward);
 
         //Rotates the transform so the forward vector points at worldPosition.
-        void lookAt(const glm::vec3 &worldPosition, const glm::vec3 &worldUp= glm::vec3{0, 1, 0});
+        void lookAt(const glm::vec3 &worldPosition, const glm::vec3 &worldUp = glm::vec3{0, 1, 0});
 
         //Rotates the transform so the forward vector points at /target/'s current position.
         void lookAt(const Transform &target, const glm::vec3 &worldUp = glm::vec3{0, 1, 0});
@@ -184,7 +188,7 @@ namespace CGEngine {
         //parent: The parent Transform to use.
         //worldPositionStays: If true, the parent-relative position, scale and rotation are modified such that the object keeps the same world space position, rotation and scale as before.
         //Description
-        void setParent(Transform* parent, bool worldPositionStays = true);
+        void setParent(Transform *parent, bool worldPositionStays = true);
 
         //Returns the parent of the transform.
         Transform *getParent() const;
@@ -211,6 +215,8 @@ namespace CGEngine {
 
         //Gets the transform index.
         int getIndexNumber() const;*/
+
+
     };
 }
 #endif //TRANSFORM_H

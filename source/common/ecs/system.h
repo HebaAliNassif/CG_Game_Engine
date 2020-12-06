@@ -16,7 +16,7 @@ namespace CGEngine {
         virtual void update(double delta_time) {}
         virtual void onExit() {}
 
-        int priority = 0;
+        int priority = 10;
         System(){};
         template<class T>
         bool Is() const {

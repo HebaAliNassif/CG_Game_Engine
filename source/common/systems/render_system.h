@@ -35,7 +35,7 @@ namespace CGEngine
 
                     entity.second->getComponent<MeshC>()->getProgram()->set("tint", glm::vec4(1, 1, 1, 1));
 
-                    mesh->getProgram()->set("transform",camera->getVPMatrix()*glm::transpose(transform->getLocalToWorldMatrix()));
+                    mesh->getProgram()->set("transform",camera->getVPMatrix()*transform->getLocalToWorldMatrix());
                     mesh->getmesh()->draw();
                 }
             }

@@ -45,11 +45,13 @@ namespace CGEngine {
             position_sensitivity = {3.0f, 3.0f, 3.0f};
             fov_sensitivity = glm::pi<float>()/10;
 
-            position = camera->getEyePosition();
+           position = camera->getEyePosition();
             auto direction = camera->getDirection();
             yaw = glm::atan(-direction.z, direction.x);
             float base_length = glm::sqrt(direction.x * direction.x + direction.z * direction.z);
             pitch = glm::atan(direction.y, base_length);
+            yaw = glm::radians(camera->camera_transform->getEulerAngles().y);
+            pitch = glm::radians(camera->camera_transform->getEulerAngles().x);
         }
 
         void release(){
@@ -93,9 +95,8 @@ namespace CGEngine {
             if(app->getKeyboard().isPressed(GLFW_KEY_E)) position -= up * ((float)delta_time * current_sensitivity.y);
             if(app->getKeyboard().isPressed(GLFW_KEY_D)) position += right * ((float)delta_time * current_sensitivity.x);
             if(app->getKeyboard().isPressed(GLFW_KEY_A)) position -= right * ((float)delta_time * current_sensitivity.x);
-
-            camera->setDirection(glm::vec3(glm::cos(yaw), 0, -glm::sin(yaw)) * glm::cos(pitch) + glm::vec3(0, glm::sin(pitch), 0));
             camera->setEyePosition(position);
+            camera->setDirection(yaw,pitch,0);
         }
 
         [[nodiscard]] float getYaw() const {return yaw;}

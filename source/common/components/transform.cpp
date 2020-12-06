@@ -1,11 +1,20 @@
 #include "transform.h"
 #include "ecs/scene.h"
+#include "quaternion_utils.h"
+void PrintMat4x4mm(glm::mat4 mat)
+{
+    std::cout<<std::setw(20)<<mat[0][0]<<std::setw(20)<<mat[0][1]<<std::setw(20)<<mat[0][2]<<std::setw(20)<<mat[0][3]<<std::setw(20)<<"\n";
+    std::cout<<std::setw(20)<<mat[1][0]<<std::setw(20)<<mat[1][1]<<std::setw(20)<<mat[1][2]<<std::setw(20)<<mat[1][3]<<std::setw(20)<<"\n";
+    std::cout<<std::setw(20)<<mat[2][0]<<std::setw(20)<<mat[2][1]<<std::setw(20)<<mat[2][2]<<std::setw(20)<<mat[2][3]<<std::setw(20)<<"\n";
+    std::cout<<std::setw(20)<<mat[3][0]<<std::setw(20)<<mat[3][1]<<std::setw(20)<<mat[3][2]<<std::setw(20)<<mat[3][3]<<std::setw(20)<<"\n";
+
+}
 
 //Returns the position of the transform in world space.
 glm::vec3 CGEngine::Transform::getPosition() const {
 
     glm::mat4 localToWorldMatrix = getLocalToWorldMatrix();
-    return glm::vec3(localToWorldMatrix[0][3], localToWorldMatrix[1][3], localToWorldMatrix[2][3]);
+    return glm::vec3(localToWorldMatrix[3][0], localToWorldMatrix[3][1], localToWorldMatrix[3][2]);
 }
 
 //Sets the position of the transform in world space.
@@ -71,12 +80,17 @@ void CGEngine::Transform::setLocalScale(const float scale) {
 
 //Matrix that transforms a point from local space into world space.
 const glm::mat4 CGEngine::Transform::getLocalToWorldMatrix() const {
-    glm::mat4 mat = glm::transpose(to_mat4());
+
+    glm::mat4 RotationMatrix = glm::transpose(glm::mat4_cast(rotation));
+    glm::mat4 TranslationMatrix =glm::translate(glm::mat4(1.0f), position); // A bit to the left
+    glm::mat4 ScalingMatrix = glm::scale(glm::mat4(1.0f), scale);
+    glm::mat4 ModelMatrix = ScalingMatrix * RotationMatrix * TranslationMatrix ;
+
     if (parent != nullptr) {
         glm::mat4 matParent = parent->getLocalToWorldMatrix();
-        mat = matParent * mat;
+        ModelMatrix = matParent * ModelMatrix;
     }
-    return mat;
+    return ModelMatrix;
 }
 
 //Matrix that transforms a point from world space into local space.
@@ -90,79 +104,36 @@ const glm::mat4 CGEngine::Transform::getWorldToLocalMatrix() const {
 //Returns the X axis of the transform in world space.
 glm::vec3 CGEngine::Transform::getRight() const {
     glm::mat4 mat = getLocalToWorldMatrix();
-    return {mat[0][0],mat[1][0],mat[2][0]};
-    //return getRotation() * glm::vec3(1, 0, 0);
+    glm::vec3 res = glm::normalize(glm::vec3 (mat[0][0],mat[1][0],mat[2][0]));
+    return res;
 }
 
 //Returns the Y axis of the transform in world space.
 glm::vec3 CGEngine::Transform::getUp() const {
     glm::mat4 mat = getLocalToWorldMatrix();
-    return {mat[0][1],mat[1][1],mat[2][1]};
-    //return getRotation() * glm::vec3(0, 1, 0);
+    glm::vec3 res = glm::normalize(glm::vec3 (mat[0][1],mat[1][1],mat[2][1]));
+    return res;
 }
 
 //Returns the Z axis of the transform in world space.
 glm::vec3 CGEngine::Transform::getForward() const {
     glm::mat4 mat = getLocalToWorldMatrix();
-    return {mat[0][2],mat[1][2],mat[2][2]};
-    //return getRotation() * glm::vec3(0, 0, 1);
+    glm::vec3 res = glm::normalize(-glm::vec3 (mat[0][2],mat[1][2],mat[2][2]));
+    return res;
 }
 
 //Sets the Z axis of the transform in world space.
 void CGEngine::Transform::setForward(const glm::vec3 &forward) {
-    glm::vec3 upVector = this->getUp();
-    glm::vec3 upNew = glm::normalize(upVector);
-    glm::vec3 forwardNew = glm::normalize(forward);
-    glm::quat qua=glm::quatLookAt(-forwardNew, upNew);
+    glm::quat qua = glm::quatLookAt(glm::normalize(forward), glm::normalize(this->getUp()));
     this->setRotation(qua);
-}
-/*
-//Sets the X axis of the transform in world space.
-void CGEngine::Transform::setRight(const glm::vec3 &right)
-{
-    glm::vec3 upVector = this->getUp();
-    glm::vec3 upNew = glm::normalize(upVector);
-    glm::vec3 forwardNew = glm::normalize(forward);
-    glm::quat qua=glm::quatLookAt(-forwardNew, upNew);
-    this->setRotation(qua);
+    //PrintMat4x4mm(getLocalToWorldMatrix());
+
 }
 
-//Sets the Y axis of the transform in world space.
-void CGEngine::Transform::setUp(const glm::vec3 &up)
-{
-    glm::vec3 NormalUp = glm::normalize(up);
-    glm::vec3 t;
-    if(NormalUp.x<NormalUp.y&&NormalUp.x<NormalUp.z) {
-        t = glm::vec3(1, NormalUp.y, NormalUp.z);
-    }
-    else if(NormalUp.z<NormalUp.y&&NormalUp.z<NormalUp.x)
-    {
-        t = glm::vec3(NormalUp.x, NormalUp.y, 1);
-    }
-    else
-    {
-        t = glm::normalize(glm::vec3(NormalUp.x,1, NormalUp.z));
-    //}
-    glm::vec3 u = glm::cross(NormalUp,t);
-    u =glm::normalize(u);
-    glm::vec3 v = glm::cross(u,NormalUp);
-    v =glm::normalize(v);
-
-    std::cout<<NormalUp.x<<" "<<NormalUp.y<<" "<<NormalUp.z<<"\n";
-    std::cout<<u.x<<" "<<u.y<<" "<<u.z<<"\n";
-    std::cout<<v.x<<" "<<v.y<<" "<<v.z<<"\n";
-
-    glm::vec3 upVector = this->getUp();
-    glm::vec3 upNew = glm::normalize(up);
-    glm::vec3 forwardNew = glm::normalize(getForward());
-    glm::quat qua=glm::quatLookAt(upNew, forwardNew);
-    this->setRotation(qua);
-
-}
-*/
 //Returns the rotation of the transform in world space stored as a Quaternion.
 glm::quat CGEngine::Transform::getRotation() const {
     glm::quat vec = glm::quat_cast(getLocalToWorldMatrix());
+    vec=glm::conjugate(vec);
     return vec;
 }
 
@@ -183,14 +154,18 @@ glm::vec3 CGEngine::Transform::getEulerAngles() const {
 
 //Sets the rotation as Euler angles in degrees.
 void CGEngine::Transform::setEulerAngles(const glm::vec3 eulerAngles) {
-    glm::quat quaternion = glm::quat(glm::radians(glm::vec3(eulerAngles.x, eulerAngles.y, eulerAngles.z)));
-    setRotation(quaternion);
+    float p = eulerAngles.x;
+    float y = eulerAngles.y;
+    float r = eulerAngles.z;
+    rotate(p,y,r);
+   // glm::quat qua = glm::quat_cast(glm::yawPitchRoll(y,p,r));
+    //this->setRotation(qua);
 }
 
 //Sets the rotation as Euler angles in degrees.
 void CGEngine::Transform::setEulerAngles(const float x, const float y, const float z) {
-    glm::quat quaternion = glm::quat(glm::radians(glm::vec3(x, y, z)));
-    setRotation(quaternion);
+    glm::quat qua = glm::quat_cast(glm::yawPitchRoll(y, x ,z));
+    this->setRotation(qua);
 }
 
 //Returns the rotation of the transform relative to the parent transform's rotation.
@@ -231,23 +206,28 @@ void CGEngine::Transform::translate(glm::vec3 translation, Space relativeTo) {
 
 //Rotates the transform in a variety of ways. The rotation is often provided as an Euler angle and not a Quaternion.
 void CGEngine::Transform::rotate(float xAngle, float yAngle, float zAngle, Space relativeTo) {
-    glm::mat4 rotationMatrix = glm::rotate(glm::radians(xAngle), glm::vec3(1, 0, 0));
-    glm::mat4 temp1=glm::rotate(glm::radians(yAngle), glm::vec3(0, 1, 0));
-    glm::mat4 temp2=glm::rotate(glm::radians(zAngle), glm::vec3(0, 0, 1));
-    rotationMatrix *= temp1;
-    rotationMatrix *= temp2;
-    glm::mat4 model_mat = glm::transpose(to_mat4());
+
+
+    std::cout<<"In Transform :\t"<<"Pitch:\t"<<glm::degrees(xAngle)<<"\tYaw\t"<<glm::degrees(yAngle)<<"\n";
+
+    glm::vec3 EulerAngles(xAngle, yAngle, zAngle);
+    glm::quat MyQuaternion = glm::quat(EulerAngles);
+    glm::mat4 rotationMatrix = glm::mat4_cast(MyQuaternion);
+
+    std::cout<<"In Transform :\t"<<"Pitch:\t"<<glm::degrees(glm::pitch(glm::quat_cast(rotationMatrix)))<<"\tYaw\t"<<glm::degrees(glm::yaw(glm::quat_cast(rotationMatrix)))<<"\n";
+
+    std::cout<<"Rotation Matrix:\n";
+    PrintMat4x4mm(rotationMatrix);
+
     glm::mat4 localToWorldMatrix = this->getLocalToWorldMatrix();
-    if (relativeTo == Space::World) {
-        glm::mat4 temp = rotationMatrix * localToWorldMatrix;
-        setRotation(glm::quat_cast(temp));
-    } else {
-        glm::mat4 temp = localToWorldMatrix * rotationMatrix;
-        setLocalRotation(glm::quat_cast(temp));
-        position.x=temp[0][3];
-        position.y=temp[1][3];
-        position.z=temp[2][3];
-    }
+
+    glm::mat4 temp =   rotationMatrix * localToWorldMatrix ;
+    setLocalRotation(glm::quat_cast(temp));
+    std::cout<<"In Transform :\t"<<"Pitch:\t"<<glm::degrees(glm::pitch(glm::quat_cast(temp)))<<"\tYaw\t"<<glm::degrees(glm::yaw(glm::quat_cast(temp)))<<"\n";
+
+    std::cout<<"After Matrix:\n";
+    PrintMat4x4mm(temp);
+
 }
 
 //Rotates the transform in a variety of ways. The rotation is often provided as an Euler angle and not a Quaternion.
@@ -342,10 +322,7 @@ void CGEngine::Transform::setPositionAndRotation(glm::vec3 position, glm::quat r
     setPosition(position);
     setRotation(rotation);
 }
-/*
-void CGEngine::Transform::updateMatrix() const {
-}
-*/
+
 //Sets the parent of the transform.
 //parent: The parent Transform to use.
 //worldPositionStays: If true, the parent-relative position, scale and rotation are modified such that the object keeps the same world space position, rotation and scale as before.
