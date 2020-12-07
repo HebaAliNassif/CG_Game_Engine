@@ -164,7 +164,11 @@ namespace CGEngine {
 
         glm::mat4 getViewMatrix(){
             if(dirtyFlags & V_DIRTY){ // Only regenerate the view matrix if its flag is dirty
-                V = glm::lookAt(camera_transform->getLocalPosition(), camera_transform->getLocalPosition() + camera_transform->getForward(), camera_transform->getUp());
+                //V = glm::lookAt(camera_transform->getLocalPosition(), camera_transform->getLocalPosition() + camera_transform->getForward(), camera_transform->getUp());
+                V = camera_transform->getLocalToWorldMatrix();
+                V[3][0]=-V[3][0];
+                V[3][1]=-V[3][1];
+                V[3][2]=-V[3][2];
                 dirtyFlags &= ~V_DIRTY; // V is no longer dirty
             }
 
