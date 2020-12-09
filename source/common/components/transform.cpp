@@ -81,10 +81,10 @@ void CGEngine::Transform::setLocalScale(const float scale) {
 //Matrix that transforms a point from local space into world space.
 const glm::mat4 CGEngine::Transform::getLocalToWorldMatrix() const {
 
-    glm::mat4 RotationMatrix = glm::transpose(glm::mat4_cast(rotation));
+    glm::mat4 RotationMatrix = glm::mat4_cast(rotation);
     glm::mat4 TranslationMatrix =glm::translate(glm::mat4(1.0f), position); // A bit to the left
     glm::mat4 ScalingMatrix = glm::scale(glm::mat4(1.0f), scale);
-    glm::mat4 ModelMatrix = ScalingMatrix * RotationMatrix * TranslationMatrix ;
+    glm::mat4 ModelMatrix =  TranslationMatrix* RotationMatrix *ScalingMatrix;
 
     if (parent != nullptr) {
         glm::mat4 matParent = parent->getLocalToWorldMatrix();
@@ -103,28 +103,29 @@ const glm::mat4 CGEngine::Transform::getWorldToLocalMatrix() const {
 
 //Returns the X axis of the transform in world space.
 glm::vec3 CGEngine::Transform::getRight() const {
-    glm::mat4 mat = getLocalToWorldMatrix();
+    glm::mat4 mat = getWorldToLocalMatrix();
     glm::vec3 res = glm::normalize(glm::vec3 (mat[0][0],mat[1][0],mat[2][0]));
     return res;
 }
 
 //Returns the Y axis of the transform in world space.
 glm::vec3 CGEngine::Transform::getUp() const {
-    glm::mat4 mat = getLocalToWorldMatrix();
+    glm::mat4 mat = getWorldToLocalMatrix();
     glm::vec3 res = glm::normalize(glm::vec3 (mat[0][1],mat[1][1],mat[2][1]));
     return res;
 }
 
 //Returns the Z axis of the transform in world space.
 glm::vec3 CGEngine::Transform::getForward() const {
-    glm::mat4 mat = getLocalToWorldMatrix();
+    glm::mat4 mat = getWorldToLocalMatrix();
     glm::vec3 res = glm::normalize(-glm::vec3 (mat[0][2],mat[1][2],mat[2][2]));
     return res;
 }
 
 //Sets the Z axis of the transform in world space.
 void CGEngine::Transform::setForward(const glm::vec3 &forward) {
-    glm::quat qua = glm::quatLookAt(glm::normalize(forward), glm::normalize(this->getUp()));
+    glm::vec3 direction = forward - this->getPosition();
+    glm::quat qua = glm::quatLookAt(glm::normalize(direction), glm::normalize(this->getUp()));
     this->setRotation(qua);
     //PrintMat4x4mm(getLocalToWorldMatrix());
 
@@ -133,7 +134,7 @@ void CGEngine::Transform::setForward(const glm::vec3 &forward) {
 //Returns the rotation of the transform in world space stored as a Quaternion.
 glm::quat CGEngine::Transform::getRotation() const {
     glm::quat vec = glm::quat_cast(getLocalToWorldMatrix());
-    vec=glm::conjugate(vec);
+    //vec=glm::conjugate(vec);
     return vec;
 }
 

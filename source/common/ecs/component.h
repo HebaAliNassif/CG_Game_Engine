@@ -35,6 +35,7 @@ namespace CGEngine {
         Component(std::string Name) { name = Name; };
 
         virtual void onAdded(){};
+        virtual void update(double delta_time){};
 
         template<class T>
         bool Is() const {

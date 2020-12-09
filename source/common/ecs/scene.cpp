@@ -73,6 +73,14 @@ void CGEngine::Scene::onDestroy() {
 
 void CGEngine::Scene::preUpdate(double deltaTime) {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    for (auto  &e : ListOfEntities)
+    {
+        for(auto &c: e.second->ListOfComponents)
+        {
+            c->update(deltaTime);
+        }
+    }
+
     for (System* s : ListOfSystems)
     {
         if (s->enabled)

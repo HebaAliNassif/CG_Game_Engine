@@ -45,6 +45,7 @@ namespace CGEngine {
             }
             T* comp = new T();
             comp->setEntityId(this->ID);
+            comp->scene=getScene();
             comp->entity=this;
             comp->onAdded();
             ListOfComponents.push_back(comp);

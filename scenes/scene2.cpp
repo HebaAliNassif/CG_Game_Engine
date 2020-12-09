@@ -1,7 +1,7 @@
 #include <scene.h>
 #include <shader.h>
 #include <mesh.h>
-#include <systems/camera-controller.h>
+#include <systems/fly-controller.h>
 #include <application_manager.h>
 #include <camera.h>
 #include <render_system.h>
@@ -24,10 +24,11 @@ namespace CGEngine
 
             //Camera Entity
             Entity* camera = createEntity("Main Camera");
-            camera->addComponent<Transform>();
+            camera->addComponent<Transform>()->setPosition(10,10,10);
+            camera->getComponent<Transform>()->setForward({0, 0, 0});
             camera->addComponent<Camera>();
-            camera->getComponent<Camera>()->setEyePosition({10, 10, 10});
-            camera->getComponent<Camera>()->setTarget({0, 0, 0});
+            camera->addComponent<FlyController>();
+
 
 
             //Shape Entity
@@ -47,12 +48,11 @@ namespace CGEngine
             sphere->getComponent<MeshC>()->getmesh()-> Sphere( models,{32, 16}, true);
             sphere->getComponent<MeshC>()->setmesh(models);
             sphere->getComponent<MeshC>()->setProgram(program);
-            sphere->getComponent<Transform>()->setLocalPosition({0,0,2});
+            sphere->getComponent<Transform>()->setLocalPosition({0,0,10});
             sphere->getComponent<Transform>()->setLocalScale({7,7,7});
 
             //Systems
             addSystem<ScriptSystem>();
-            addSystem<CameraController>();
             addSystem<RenderSystem>();
         }
         void  start(Application_Manager* manager) override
@@ -63,8 +63,8 @@ namespace CGEngine
         }
         ~scene2()
         {
-            //program.destroy();
-            //model.destroy();
+            program.destroy();
+            model.destroy();
             //camera_controller.release();
         }
     };

@@ -1,7 +1,7 @@
 #include <scene.h>
 #include <shader.h>
 #include <mesh.h>
-#include <systems/camera-controller.h>
+#include <systems/fly-controller.h>
 #include <application_manager.h>
 #include <camera.h>
 #include <render_system.h>
@@ -19,10 +19,10 @@ namespace CGEngine
 
             //Camera Entity
             Entity* camera = createEntity("Main Camera");
-            camera->addComponent<Transform>();
+            camera->addComponent<Transform>()->setPosition(10,10,10);
+            camera->getComponent<Transform>()->setForward({0, 0, 0});
             camera->addComponent<Camera>();
-            camera->getComponent<Camera>()->setEyePosition({10, 10, 10});
-            camera->getComponent<Camera>()->setTarget({0, 0, 0});
+            camera->addComponent<FlyController>();
 
 
 
@@ -37,7 +37,6 @@ namespace CGEngine
 
 
             //Systems
-            addSystem<CameraController>();
             addSystem<RenderSystem>();
         }
         void  start(Application_Manager* manager) override
