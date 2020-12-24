@@ -269,7 +269,7 @@ int CGEngine::Application_Manager::run() {
             }
             current_scene = next_scene;
             next_scene = nullptr;
-            this->current_scene->start(this);
+            this->current_scene->start();
         }
         if (current_scene != nullptr) {
             glfwPollEvents(); // Read all the user events and call relevant callbacks.

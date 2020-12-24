@@ -7,6 +7,7 @@ CGEngine::Entity* CGEngine::Scene::createEntity(std::string name)
     EntityID id = m_LastEntityID;
     Entity* entity = new Entity(id,this);
     entity->scene=this;
+    entity->name=name;
     ListOfEntities[name] = entity;
     return entity;
 }
@@ -40,35 +41,22 @@ void CGEngine::Scene::removeRootTransform(Transform* t)
     rootTransforms.erase(pos);
 }
 
-void CGEngine::Scene::start(Application_Manager* manager)
-{
-    std::sort(ListOfSystems.begin(), ListOfSystems.end(), [](System* a, System* b) {
-        return a->priority < b->priority;
-    });
 
-    for (System* s : ListOfSystems)
+void CGEngine::Scene::onDestroy() {
+    glLoadIdentity();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    for (auto  &e : ListOfEntities)
     {
-        s->start();
+        for(auto &c: e.second->ListOfComponents)
+        {
+            c->onExit();
+        }
     }
-}
-
-void CGEngine::Scene::update(double deltaTime)
-{
-
-}
-
-
-void CGEngine::Scene::onExit() {
     for (System* s : ListOfSystems)
     {
         if (s->enabled)
             s->onExit();
     }
-}
-
-void CGEngine::Scene::onDestroy() {
-    glLoadIdentity();
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void CGEngine::Scene::preUpdate(double deltaTime) {
@@ -88,7 +76,39 @@ void CGEngine::Scene::preUpdate(double deltaTime) {
     }
 }
 
-void CGEngine::Scene::onStart(Application_Manager* manager) {
-    this->manager=manager;
+void CGEngine::Scene::onStart() {
     glClearColor(0, 0, 0, 0);
+    for (auto  &e : ListOfEntities)
+    {
+        for(auto &c: e.second->ListOfComponents)
+        {
+            c->onAdded();
+        }
+    }
+
+    std::sort(ListOfSystems.begin(), ListOfSystems.end(), [](System* a, System* b) {
+        return a->priority < b->priority;
+    });
+
+    for (System* s : ListOfSystems)
+    {
+        s->start();
+    }
+
+}
+
+bool CGEngine::Scene::Deserialize(const rapidjson::Value &obj) {
+    return true;
+}
+
+bool CGEngine::Scene::Serialize(rapidjson::Writer<rapidjson::StringBuffer> *writer) const {
+    writer->StartObject();
+    for(auto &trans: rootTransforms)
+    {
+        trans->entity->Serialize(writer);
+    }
+
+    writer->EndObject();
+
+    return true;
 }

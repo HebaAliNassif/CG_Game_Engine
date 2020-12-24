@@ -7,9 +7,11 @@
 #include <system.h>
 #include <transform.h>
 #include <application_manager.h>
+#include <../serialization/json_base.h>
+
 namespace CGEngine {
     using EntityID = uint32_t;
-    class Scene {
+    class Scene :public JSONBase{
     private:
         Application_Manager* manager;
     protected:
@@ -17,17 +19,16 @@ namespace CGEngine {
         EntityID m_LastEntityID = 0;
     public:
         std::unordered_map<std::string,Entity*> ListOfEntities;
-        //std::unordered_map<std::string,System*> ListOfSystems;
 
         std::vector<System*> ListOfSystems;
         std::vector<Transform*> rootTransforms;
         inline static Scene* current_scene = nullptr;
 
-        virtual void start(Application_Manager* manager);
-        virtual void update(double deltaTime);
-        virtual void onExit();
+        virtual void start(){};
+        virtual void update(double deltaTime){};
+        virtual void onExit(){};
 
-        void onStart(Application_Manager* manager);
+        void onStart();
         void preUpdate(double deltaTime);
         void onDestroy();
         const auto& GetRootTransforms() { return rootTransforms; }
@@ -88,7 +89,13 @@ namespace CGEngine {
             }
         }
 
+        virtual bool Deserialize(const rapidjson::Value& obj) ;
+        virtual bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const ;
+
+
     };
+
+
 }
 
 #endif //SCENE_H

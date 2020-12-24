@@ -31,14 +31,21 @@ set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
 set(COMMON_SOURCES
         source/common/application_manager.cpp
         source/common/texture/screenshot.cpp
-        source/common/shader.cpp
+        source/common/shader/shader.cpp
         source/common/ecs/component.cpp
         source/common/components/transform.cpp
         source/common/ecs/scene.cpp
+        source/common/ecs/entity.cpp
         scenes/scene1.cpp
         scenes/scene2.cpp
-        source/common/components/MeshC.cpp
+        source/common/components/mesh_component.cpp
         source/scripts/shape_script.cpp
+        source/common/serialization/json_base.cpp
+        source/common/mesh/mesh-utils.cpp
+        source/common/texture/texture.cpp
+        source/common/resource_manager.cpp
+        source/common/texture/sampler.cpp
+        source/common/components/material.cpp
         )
 
 

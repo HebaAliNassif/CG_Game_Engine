@@ -14,10 +14,12 @@
 namespace CGEngine {
 
     // An enum for the camera projection type
-    enum struct CameraType {
+    enum  CameraType {
         Orthographic,
         Perspective
     };
+    static  const char  *enum_CameraType[] =
+            { "Orthographic", "Perspective" };
 
     // A class that represents a camera
     // Used to generate a view and a projection matrix
@@ -254,6 +256,25 @@ namespace CGEngine {
             return glm::vec3(clip) / clip.w;
             // Note that we must divide by w even though we not going to the NDC space. This is because of the projection matrix.
         }
+        bool Deserialize(const rapidjson::Value& obj) override
+        {
+            return true;
+        }
+        bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const override
+        {
+            writer->String("camera");
+            writer->StartObject();
+
+            writer->String("scroll");
+            writer->String(std::to_string(scroll).c_str());
+
+            writer->String("type");
+            writer->String(enum_CameraType[type]);
+
+            writer->EndObject();
+            return true;
+        }
+
 
     };
 

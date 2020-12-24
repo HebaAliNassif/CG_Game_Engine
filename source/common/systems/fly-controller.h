@@ -90,7 +90,7 @@ namespace CGEngine {
             if(app->getKeyboard().isPressed(GLFW_KEY_A)) position -= right * ((float)delta_time * current_sensitivity.x);
 
             entity_transform->setPosition(position);
-            entity_transform->setEulerAngles(pitch,yaw,0);
+            entity_transform->setEulerAngles(glm::degrees(pitch),glm::degrees(yaw),0);
         }
 
         [[nodiscard]] float getYaw() const {return yaw;}
@@ -118,7 +118,14 @@ namespace CGEngine {
         void setYawSensitivity(float sensitivity){this->yaw_sensitivity = sensitivity;}
         void setPitchSensitivity(float sensitivity){this->pitch_sensitivity = sensitivity;}
         void setPositionSensitivity(glm::vec3 sensitivity){this->position_sensitivity = sensitivity;}
-
+        bool Deserialize(const rapidjson::Value& obj) override
+        {
+            return true;
+        }
+        bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const override
+        {
+            return true;
+        }
     };
 }
 

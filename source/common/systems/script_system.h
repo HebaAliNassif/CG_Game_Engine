@@ -7,7 +7,7 @@ namespace CGEngine
     class ScriptSystem: public System
     {
     public:
-        void start() override
+       /* void start() override
         {
             this->priority=1;
             std::unordered_map<std::string,Entity*> ListOfEntities = this->scene->ListOfEntities;
@@ -43,7 +43,7 @@ namespace CGEngine
                     script->script->onExit();
                 }
             }
-        }
+        }*/
     };
 }
 

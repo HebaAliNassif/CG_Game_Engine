@@ -3,6 +3,23 @@
 #include <iomanip>
 #include "glm/glm.hpp"
 //For debug
+/*
+void PrintMatTransform(Transform* T)
+{
+    std::cout<<"Local to World Matrix\n";
+    PrintMat4x4(T->getLocalToWorldMatrix());
+    std::cout<<"World to Local Matrix\n";
+    PrintMat4x4(T->getWorldToLocalMatrix());
+    std::cout<<"getPosition\n";
+    PrintVector3(T->getPosition());
+    std::cout<<"getLocalPosition\n";
+    PrintVector3(T->getLocalPosition());
+    std::cout<<"getLocalScale\n";
+    PrintVector3(T->getLocalScale());
+    std::cout<<"getLossyScale\n";
+    PrintVector3(T->getLossyScale());
+}
+ */
 void PrintVector3(glm::vec3 vex)
 {
     std::cout<<vex.x<<"  "<<vex.y<<"  "<<vex.z<<"\n";

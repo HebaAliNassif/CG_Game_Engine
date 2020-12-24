@@ -36,8 +36,6 @@ namespace CGEngine {
     protected:
         glm::vec3 position, scale;
         glm::quat rotation;
-        std::vector<Transform *> children;
-        Transform *parent = nullptr;
 
         int rootOrder = 0;
 
@@ -47,18 +45,27 @@ namespace CGEngine {
 
         int indexNumber = 0;
 
-
     public:
+        std::unordered_map<std::string, Transform *> children;
+        Transform *parent = nullptr;
+
+
         glm::mat4 to_mat4() const {
             return glm::translate(glm::mat4(1.0f), position) *
                    glm::mat4_cast(rotation) *
                    glm::scale(glm::mat4(1.0f), scale);
         }
+        void onAdded() override;
+
+        virtual bool Deserialize(const rapidjson::Value& obj) ;
+        virtual bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const ;
 
         Transform(glm::vec3 position = {0, 0, 0}, glm::quat rotation = {0, 0, 0, 0}, glm::vec3 scale = {1, 1, 1})
-                : Component("transform"), position(position), rotation(rotation), scale(scale) {};
+                : Component("transform"), position(position), rotation(rotation), scale(scale){}
 
-        //Matrix that transforms a point from local space into world space.
+        glm::mat4 getModelMatrix() const;
+
+            //Matrix that transforms a point from local space into world space.
         const glm::mat4 getLocalToWorldMatrix() const;
 
         //Matrix that transforms a point from world space into local space.
@@ -173,9 +180,6 @@ namespace CGEngine {
         //Transforms position from local space to world space.
         glm::vec3 transformPoint(const glm::vec3 &point) const;
 
-        //Transforms direction from local space to world space.
-        glm::vec3 transformDirection(const glm::vec3 &direction) const;
-
         //Transforms vector from local space to world space.
         glm::vec3 transformVector(const glm::vec3 &direction) const;
 
@@ -188,19 +192,19 @@ namespace CGEngine {
         //parent: The parent Transform to use.
         //worldPositionStays: If true, the parent-relative position, scale and rotation are modified such that the object keeps the same world space position, rotation and scale as before.
         //Description
-        void setParent(Transform *parent, bool worldPositionStays = true);
+        void setParent(Transform* parent, bool worldPositionStays = true);
 
         //Returns the parent of the transform.
         Transform *getParent() const;
 
-        //Returns the transform of children
-        const std::vector<Transform *> &getChildren() const;
+         //Returns the transform of children
+         const std::unordered_map<std::string, Transform *> &getChildren() const;
 
-        //Returns the transform of the child by index.
-        Transform *getChild(int index) const;
+        //Returns the transform of the child by name.
+        Transform *getChild(const std::string name) const;
 
         //Returns the number of children the parent Transform has.
-        int childCount();
+        int childCount() const;
 
         //TODO
         //Implement those two functions
@@ -215,6 +219,9 @@ namespace CGEngine {
 
         //Gets the transform index.
         int getIndexNumber() const;*/
+
+
+
 
 
     };

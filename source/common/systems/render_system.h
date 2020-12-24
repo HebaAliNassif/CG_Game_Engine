@@ -3,7 +3,7 @@
 #include <application_manager.h>
 #include <system.h>
 #include <iostream>
-#include <MeshC.h>
+#include <mesh_component.h>
 namespace CGEngine
 {
     class RenderSystem: public System
@@ -26,14 +26,14 @@ namespace CGEngine
             for (auto entity : ListOfEntities)
             {
                 Transform *transform = entity.second->getComponent<Transform>();
-                MeshC *mesh = entity.second->getComponent<MeshC>();
+                Mesh_Component *mesh = entity.second->getComponent<Mesh_Component>();
                 Camera *camera = this->scene->getEntity("Main Camera")->getComponent<Camera>();
 
                 if(transform && mesh && camera)
                 {
-                    glUseProgram(entity.second->getComponent<MeshC>()->getProgram()->programID);
+                    glUseProgram(entity.second->getComponent<Mesh_Component>()->getProgram()->programID);
 
-                    entity.second->getComponent<MeshC>()->getProgram()->set("tint", glm::vec4(1, 1, 1, 1));
+                    entity.second->getComponent<Mesh_Component>()->getProgram()->set("tint", glm::vec4(1, 1, 1, 1));
 
                     mesh->getProgram()->set("transform",camera->getVPMatrix()*transform->getLocalToWorldMatrix());
                     mesh->getmesh()->draw();

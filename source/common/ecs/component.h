@@ -2,6 +2,8 @@
 #ifndef COMPONENT_H
 #define COMPONENT_H
 #include <string>
+#include <iostream>
+#include <../serialization/json_base.h>
 namespace CGEngine {
 
     class Entity;
@@ -12,7 +14,7 @@ namespace CGEngine {
         mesh
     };
 
-    class Component {
+    class Component : public JSONBase{
 
         using EntityID = uint32_t;
     public:
@@ -32,10 +34,12 @@ namespace CGEngine {
 
         virtual std::string GetComponentName();
 
+
         Component(std::string Name) { name = Name; };
 
         virtual void onAdded(){};
         virtual void update(double delta_time){};
+        virtual void onExit(){};
 
         template<class T>
         bool Is() const {

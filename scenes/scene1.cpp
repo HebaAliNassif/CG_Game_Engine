@@ -1,11 +1,12 @@
 #include <scene.h>
-#include <shader.h>
 #include <mesh.h>
 #include <systems/fly-controller.h>
 #include <application_manager.h>
 #include <camera.h>
 #include <render_system.h>
-#include <MeshC.h>
+#include <mesh_component.h>
+#include <resource_manager.h>
+
 namespace CGEngine
 {
     class scene1 : public CGEngine::Scene {
@@ -15,7 +16,7 @@ namespace CGEngine
 
         scene1()
         {
-            program = Shader::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","shape1");
+            program = Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","shape1");
 
             //Camera Entity
             Entity* camera = createEntity("Main Camera");
@@ -25,21 +26,20 @@ namespace CGEngine
             camera->addComponent<FlyController>();
 
 
-
             //Shape Entity
             Entity* shape = createEntity("Shape");
             shape->addComponent<Transform>();
-            shape->addComponent<MeshC>();
-            shape->getComponent<MeshC>()->getmesh()-> Cuboid( model, true);
-            shape->getComponent<MeshC>()->setmesh(model);
-            shape->getComponent<MeshC>()->setProgram(program);
+            shape->addComponent<Mesh_Component>();
+            shape->getComponent<Mesh_Component>()->getmesh()-> Cuboid( model, true);
+            shape->getComponent<Mesh_Component>()->setmesh(model);
+            shape->getComponent<Mesh_Component>()->setProgram(program);
             shape->getComponent<Transform>()->setLocalScale({7,2,7});
 
 
             //Systems
             addSystem<RenderSystem>();
         }
-        void  start(Application_Manager* manager) override
+        void  start() override
         {
 
         }

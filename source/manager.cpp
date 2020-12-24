@@ -1,14 +1,12 @@
 #include <application_manager.h>
-#include <shader.h>
+#include <shader/shader.h>
 #include <irrKlang.h>
 #include <iostream>
-#include <ecs/entity.h>
-#include <transform.h>
 #include <scene.h>
 #include <camera.h>
 #include <scene1.cpp>
 #include <scene2.cpp>
-
+#include <../debug.h>
 using namespace irrklang;
 
 class manager : public CGEngine::Application_Manager {
@@ -60,13 +58,23 @@ class manager : public CGEngine::Application_Manager {
 
 using namespace CGEngine;
 
-
 int main(int argc, char **argv) {
-  /*  Scene World;
+    return manager().run();
+    Scene world;
+    Entity* product=world.createEntity("product");
+    product->addComponent<Transform>();
+    if(product->addComponent<Camera>()) std::cout<<"Added";
 
-    Entity* shape = World.createEntity("shape");
-    Transform *T = shape->addComponent<Transform>();
-    T->setForward(glm::vec3(1,1,1));
-    printTransformInfo(T);*/
-   return manager().run();
+   /*
+    Entity* child1=world.createEntity("child1");
+    child1->addComponent<Transform>();
+    //child1->getComponent<Transform>()->setParent(product->getComponent<Transform>());
+
+    Entity* child2=world.createEntity("child2");
+    child2->addComponent<Transform>();
+   // child2->getComponent<Transform>()->setParent(product->getComponent<Transform>());
+
+    world.SerializeToFile("DataSampleNew.json");*/
+    return 0;
+   // return manager().run();
 }

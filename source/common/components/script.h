@@ -22,9 +22,9 @@ namespace CGEngine
         Script():Component("script"){};
         Script(std::string name):Component("script"),script_name(name){};
 
-        virtual void start(){};
+        /*virtual void start(){};
         virtual void update(double deltaTime){};
-        virtual void onExit(){};
+        virtual void onExit(){};*/
 
     };
 }

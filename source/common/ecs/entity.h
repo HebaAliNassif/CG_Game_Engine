@@ -7,13 +7,14 @@
 #include <vector>
 #include "component.h"
 #include <transform.h>
+#include <../serialization/json_base.h>
 #include <algorithm>
 namespace CGEngine {
 
     struct Node{
         int value=-1;
     };
-    class Entity {
+    class Entity : public JSONBase{
         using EntityID = uint32_t;
         friend class Scene;
     public:
@@ -21,9 +22,12 @@ namespace CGEngine {
         std::vector<Component*> ListOfComponents;
         Scene* scene = nullptr;
         EntityID ID;
+        std::string name;
+
         Entity::Entity(EntityID entityID, Scene* scene) : ID(entityID),scene(scene)
         {
         }
+
 
         Scene *getScene() const {
             return scene;
@@ -61,6 +65,7 @@ namespace CGEngine {
                 if (t != nullptr)
                     return t;
             }
+            //puts("Component does not exist.");
             return nullptr;
         }
 
@@ -87,6 +92,9 @@ namespace CGEngine {
         T *As() {
             return dynamic_cast<T *>(this);
         }
+
+        virtual bool Deserialize(const rapidjson::Value& obj) ;
+        virtual bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const ;
 
     /*
        //Removes the entity.
@@ -116,5 +124,6 @@ namespace CGEngine {
         // ~Entity();
         */
     };
+
 }
 #endif //ENTITY_H
