@@ -8,10 +8,10 @@
 #include <transform.h>
 #include <application_manager.h>
 #include <../serialization/json_base.h>
-
+#include <data-types.h>
 namespace CGEngine {
     using EntityID = uint32_t;
-    class Scene :public JSONBase{
+    class Scene {
     private:
         Application_Manager* manager;
     protected:
@@ -89,8 +89,7 @@ namespace CGEngine {
             }
         }
 
-        virtual bool Deserialize(const rapidjson::Value& obj) ;
-        virtual bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const ;
+
 
 
     };

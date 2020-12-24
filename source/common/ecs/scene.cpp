@@ -97,18 +97,3 @@ void CGEngine::Scene::onStart() {
 
 }
 
-bool CGEngine::Scene::Deserialize(const rapidjson::Value &obj) {
-    return true;
-}
-
-bool CGEngine::Scene::Serialize(rapidjson::Writer<rapidjson::StringBuffer> *writer) const {
-    writer->StartObject();
-    for(auto &trans: rootTransforms)
-    {
-        trans->entity->Serialize(writer);
-    }
-
-    writer->EndObject();
-
-    return true;
-}

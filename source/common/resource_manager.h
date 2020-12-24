@@ -20,9 +20,9 @@ namespace CGEngine {
         static Texture getTexture(std::string name);
 
         //Loads a shader program from the given vertex and fragment shader's source code
-        static Shader LoadShader(const char *vertexShaderFileName, const char *fragmentShaderFileName, std::string shaderName);
+        static Shader* LoadShader(const char *vertexShaderFileName, const char *fragmentShaderFileName, std::string shaderName);
         // retrieves a stored shader
-        static Shader getShader(std::string name);
+        static Shader* getShader(std::string name);
 
         static void clear();
 

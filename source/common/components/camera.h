@@ -256,24 +256,7 @@ namespace CGEngine {
             return glm::vec3(clip) / clip.w;
             // Note that we must divide by w even though we not going to the NDC space. This is because of the projection matrix.
         }
-        bool Deserialize(const rapidjson::Value& obj) override
-        {
-            return true;
-        }
-        bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const override
-        {
-            writer->String("camera");
-            writer->StartObject();
 
-            writer->String("scroll");
-            writer->String(std::to_string(scroll).c_str());
-
-            writer->String("type");
-            writer->String(enum_CameraType[type]);
-
-            writer->EndObject();
-            return true;
-        }
 
 
     };

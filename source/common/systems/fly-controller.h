@@ -118,14 +118,7 @@ namespace CGEngine {
         void setYawSensitivity(float sensitivity){this->yaw_sensitivity = sensitivity;}
         void setPitchSensitivity(float sensitivity){this->pitch_sensitivity = sensitivity;}
         void setPositionSensitivity(glm::vec3 sensitivity){this->position_sensitivity = sensitivity;}
-        bool Deserialize(const rapidjson::Value& obj) override
-        {
-            return true;
-        }
-        bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const override
-        {
-            return true;
-        }
+
     };
 }
 

@@ -45,14 +45,14 @@ CGEngine::Texture CGEngine::Resource_Manager::readTextureFromFile(const char *fi
     return texture;
 }
 
-CGEngine::Shader CGEngine::Resource_Manager::LoadShader(const char *vertexShaderFileName, const char *fragmentShaderFileName, std::string shaderName)
+CGEngine::Shader* CGEngine::Resource_Manager::LoadShader(const char *vertexShaderFileName, const char *fragmentShaderFileName, std::string shaderName)
 {
     Shaders[shaderName] = readShaderFromFile(vertexShaderFileName, fragmentShaderFileName);
-    return Shaders[shaderName];
+    return &Shaders[shaderName];
 }
-CGEngine::Shader CGEngine::Resource_Manager::getShader(std::string name)
+CGEngine::Shader* CGEngine::Resource_Manager::getShader(std::string name)
 {
-    return Shaders[name];
+    return &Shaders[name];
 }
 
 CGEngine::Shader CGEngine::Resource_Manager::readShaderFromFile(const char *vertexShaderFileName, const char *fragmentShaderFileName){

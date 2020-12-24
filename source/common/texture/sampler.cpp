@@ -3,6 +3,7 @@
 
 CGEngine::Sampler::Sampler()
 {
+
 }
 
 void CGEngine::Sampler::generate() {
@@ -22,4 +23,8 @@ void CGEngine::Sampler::generate() {
 
 void CGEngine::Sampler::bind() const {
     glBindSampler(0, samplerID);
+}
+
+CGEngine::Sampler::~Sampler() {
+    glDeleteSamplers(1, &samplerID);
 }

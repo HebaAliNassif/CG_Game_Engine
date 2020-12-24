@@ -18,6 +18,9 @@ namespace CGEngine {
         void generate();
         void bind() const;
 
+        virtual ~Sampler();
+
+
     };
 }
 

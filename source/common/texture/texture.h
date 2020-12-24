@@ -6,7 +6,8 @@
 #include <component.h>
 #include <map>
 #include <string>
-
+#include <glm/glm.hpp>
+#include <data-types.h>
 namespace CGEngine {
     class Texture {
 
@@ -31,5 +32,6 @@ namespace CGEngine {
         GLfloat reflectivity;
         GLuint textureID;
     };
+
 }
 #endif //TEXTURE_H

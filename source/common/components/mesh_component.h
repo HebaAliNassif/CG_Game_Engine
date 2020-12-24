@@ -25,13 +25,6 @@ namespace CGEngine {
 
         Shader *getProgram();
 
-        bool Deserialize(const rapidjson::Value &obj) override {
-            return true;
-        }
-
-        bool Serialize(rapidjson::Writer<rapidjson::StringBuffer> *writer) const override {
-            return true;
-        }
     };
 }
 

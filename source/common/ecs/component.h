@@ -14,7 +14,7 @@ namespace CGEngine {
         mesh
     };
 
-    class Component : public JSONBase{
+    class Component {
 
         using EntityID = uint32_t;
     public:

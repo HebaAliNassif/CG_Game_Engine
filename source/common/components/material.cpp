@@ -1,9 +1,5 @@
 #include "material.h"
 
-CGEngine::Material::Material():Component("Material")
-{
-
-}
 
 const std::string &CGEngine::Material::getShaderName() const {
     return shaderName;
@@ -19,5 +15,13 @@ void CGEngine::Material::bindUniforms() const {
     {
         //Resource_Manager::getShader(shaderName).set(elem.first,);
     }
+}
+
+CGEngine::Shader* CGEngine::Material::getShader() const {
+    return Resource_Manager::getShader(shaderName);
+}
+
+int CGEngine::Material::GetShaderID() const {
+    return Resource_Manager::getShader(shaderName)->programID;
 }
 

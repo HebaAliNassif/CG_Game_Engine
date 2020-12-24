@@ -57,8 +57,7 @@ namespace CGEngine {
         }
         void onAdded() override;
 
-        virtual bool Deserialize(const rapidjson::Value& obj) ;
-        virtual bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const ;
+
 
         Transform(glm::vec3 position = {0, 0, 0}, glm::quat rotation = {0, 0, 0, 0}, glm::vec3 scale = {1, 1, 1})
                 : Component("transform"), position(position), rotation(rotation), scale(scale){}

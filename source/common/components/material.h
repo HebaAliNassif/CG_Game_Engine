@@ -30,23 +30,16 @@ namespace CGEngine {
         }
     };
 
-    MaterialProperty<std::string> albedo_map("albedo_map","white");
-    MaterialProperty<std::string> specular_map("specular_map","black");
-    MaterialProperty<std::string> roughness_map("roughness_map","white");
-    MaterialProperty<std::string> ambient_occlusion_map("ambient_occlusion_map","white");
-    MaterialProperty<std::string> emissive_map("emissive_map","black");
 
-    MaterialProperty<glm::vec3> albedo_tint("albedo_tint",{1.0f, 1.0f, 1.0f});
-    MaterialProperty<glm::vec3> specular_tint("specular_tint",{1.0f, 1.0f, 1.0f});
-    MaterialProperty<glm::vec3> emissive_tint("albedo_tint",{1.0f, 1.0f, 1.0f});
-
-    MaterialProperty<glm::vec2> roughness_scale("roughness_scale",{0.0f, 1.0f});
 
     class Material : public Component {
     public:
         std::map<std::string, std::any> listOfMaterialProperties;
 
-        Material();
+
+        Material():Component("Material")
+        {
+        }
         //TODO
         //Add the render state reference
 
@@ -54,10 +47,13 @@ namespace CGEngine {
 
         const std::string &getShaderName() const;
 
+        Shader* getShader() const;
+
+        int GetShaderID() const;
+
         void setShaderName(const std::string &shaderName);
 
         void bindUniforms() const;
-
 
 
     };

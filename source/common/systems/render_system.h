@@ -4,6 +4,7 @@
 #include <system.h>
 #include <iostream>
 #include <mesh_component.h>
+#include <material.h>
 namespace CGEngine
 {
     class RenderSystem: public System
@@ -28,14 +29,12 @@ namespace CGEngine
                 Transform *transform = entity.second->getComponent<Transform>();
                 Mesh_Component *mesh = entity.second->getComponent<Mesh_Component>();
                 Camera *camera = this->scene->getEntity("Main Camera")->getComponent<Camera>();
-
-                if(transform && mesh && camera)
+                Material * mat =  entity.second->getComponent<Material>();
+                if(transform && mesh && camera && mat)
                 {
-                    glUseProgram(entity.second->getComponent<Mesh_Component>()->getProgram()->programID);
-
-                    entity.second->getComponent<Mesh_Component>()->getProgram()->set("tint", glm::vec4(1, 1, 1, 1));
-
-                    mesh->getProgram()->set("transform",camera->getVPMatrix()*transform->getLocalToWorldMatrix());
+                    glUseProgram(mat->getShader()->programID);
+                    mat->getShader()->set("tint", glm::vec4(1, 1, 1, 1));
+                    mat->getShader()->set("transform",camera->getVPMatrix()*transform->getLocalToWorldMatrix());
                     mesh->getmesh()->draw();
                 }
             }

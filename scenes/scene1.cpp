@@ -11,7 +11,7 @@ namespace CGEngine
 {
     class scene1 : public CGEngine::Scene {
     public:
-        Shader program;
+        Shader* program;
         Mesh model;
 
         scene1()
@@ -32,7 +32,7 @@ namespace CGEngine
             shape->addComponent<Mesh_Component>();
             shape->getComponent<Mesh_Component>()->getmesh()-> Cuboid( model, true);
             shape->getComponent<Mesh_Component>()->setmesh(model);
-            shape->getComponent<Mesh_Component>()->setProgram(program);
+            shape->getComponent<Mesh_Component>()->setProgram(*program);
             shape->getComponent<Transform>()->setLocalScale({7,2,7});
 
 
@@ -50,7 +50,7 @@ namespace CGEngine
         }
         ~scene1()
         {
-            program.destroy();
+            program->destroy();
             model.destroy();
             //camera_controller.release();
         }

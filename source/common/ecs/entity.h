@@ -14,7 +14,7 @@ namespace CGEngine {
     struct Node{
         int value=-1;
     };
-    class Entity : public JSONBase{
+    class Entity {
         using EntityID = uint32_t;
         friend class Scene;
     public:
@@ -93,8 +93,7 @@ namespace CGEngine {
             return dynamic_cast<T *>(this);
         }
 
-        virtual bool Deserialize(const rapidjson::Value& obj) ;
-        virtual bool Serialize(rapidjson::Writer<rapidjson::StringBuffer>* writer) const ;
+
 
     /*
        //Removes the entity.
