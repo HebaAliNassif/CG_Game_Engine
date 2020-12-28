@@ -1,18 +1,9 @@
-//
-// Created by amalm on 11/28/2020.
-//
-
 #include "mesh_component.h"
-void CGEngine::Mesh_Component::setmesh(CGEngine::Mesh &mod) {
-    model=&mod;
+
+const std::string &CGEngine::Mesh_Component::getMeshModelName() const {
+    return meshModelName;
 }
 
-void CGEngine::Mesh_Component::setProgram(Shader &prog) {
-    program=&prog;
-}
-CGEngine::Mesh* CGEngine::Mesh_Component::getmesh() {
-    return model;
-}
-CGEngine::Shader* CGEngine::Mesh_Component::getProgram()  {
-    return program;
+void CGEngine::Mesh_Component::setMeshModelName(const std::string &meshModelName) {
+    Mesh_Component::meshModelName = meshModelName;
 }

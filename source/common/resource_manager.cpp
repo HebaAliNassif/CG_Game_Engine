@@ -16,13 +16,13 @@ std::string read_file(const char* filename){
     return std::string(std::istreambuf_iterator<char>(fin), std::istreambuf_iterator<char>());
 }
 
-CGEngine::Texture CGEngine::Resource_Manager::loadTexture(const char *file, bool alpha, std::string name) {
+CGEngine::Texture* CGEngine::Resource_Manager::loadTexture(const char *file, bool alpha, std::string name) {
     Textures[name] = readTextureFromFile(file, alpha);
-    return Textures[name];
+    return &Textures[name];
 }
 
-CGEngine::Texture CGEngine::Resource_Manager::getTexture(std::string name) {
-    return Textures[name];
+CGEngine::Texture* CGEngine::Resource_Manager::getTexture(std::string name) {
+    return &Textures[name];
 }
 
 CGEngine::Texture CGEngine::Resource_Manager::readTextureFromFile(const char *file, bool alpha) {

@@ -15,9 +15,9 @@ namespace CGEngine {
         static std::map<std::string, Texture>Textures;
 
         // loads (and generates) a texture from file
-        static Texture loadTexture(const char *file, bool alpha, std::string name);
+        static Texture* loadTexture(const char *file, bool alpha, std::string name);
         // retrieves a stored texture
-        static Texture getTexture(std::string name);
+        static Texture* getTexture(std::string name);
 
         //Loads a shader program from the given vertex and fragment shader's source code
         static Shader* LoadShader(const char *vertexShaderFileName, const char *fragmentShaderFileName, std::string shaderName);

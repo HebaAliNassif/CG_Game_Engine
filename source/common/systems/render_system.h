@@ -4,7 +4,9 @@
 #include <system.h>
 #include <iostream>
 #include <mesh_component.h>
-#include <material.h>
+#include <material/material.h>
+#include <material_component.h>
+#include <mesh-utils.hpp>
 namespace CGEngine
 {
     class RenderSystem: public System
@@ -29,16 +31,29 @@ namespace CGEngine
                 Transform *transform = entity.second->getComponent<Transform>();
                 Mesh_Component *mesh = entity.second->getComponent<Mesh_Component>();
                 Camera *camera = this->scene->getEntity("Main Camera")->getComponent<Camera>();
-                Material * mat =  entity.second->getComponent<Material>();
-                if(transform && mesh && camera && mat)
-                {
-                    glUseProgram(mat->getShader()->programID);
-                    mat->getShader()->set("tint", glm::vec4(1, 1, 1, 1));
-                    mat->getShader()->set("transform",camera->getVPMatrix()*transform->getLocalToWorldMatrix());
-                    mesh->getmesh()->draw();
+                Material_Component * mat_Component =  entity.second->getComponent<Material_Component>();
+                if(mat_Component) {
+
+                    std::string matName = mat_Component->getMaterialName();
+                    if(matName!="") {
+                        Material* mat = Material::getMaterial(matName);
+
+                        if (transform && mesh && camera && mat ) {
+                            mat->bindUniforms();
+                            glUseProgram(mat->getShader()->programID);
+                            mat->getShader()->set("tint", glm::vec4(1, 1, 1, 1));
+                            mat->getShader()->set("transform",
+                                                  camera->getVPMatrix() * transform->getLocalToWorldMatrix());
+                            (CGEngine::mesh_utils::getMesh(mesh->getMeshModelName()))->draw();
+
+
+                        }
+                    }
                 }
             }
         }
+
+
     };
 }
 #endif //SYSTEM_H

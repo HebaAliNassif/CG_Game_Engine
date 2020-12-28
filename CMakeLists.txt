@@ -46,7 +46,7 @@ set(COMMON_SOURCES
         source/common/resource_manager.cpp
         source/common/texture/sampler.cpp
         source/common/texture/sampler_base.cpp
-        source/common/components/material.cpp
+        source/common/material/material.cpp
         )
 
 

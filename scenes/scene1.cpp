@@ -25,7 +25,7 @@ namespace CGEngine
             camera->addComponent<Camera>();
             camera->addComponent<FlyController>();
 
-
+/*
             //Shape Entity
             Entity* shape = createEntity("Shape");
             shape->addComponent<Transform>();
@@ -33,7 +33,7 @@ namespace CGEngine
             shape->getComponent<Mesh_Component>()->getmesh()-> Cuboid( model, true);
             shape->getComponent<Mesh_Component>()->setmesh(model);
             shape->getComponent<Mesh_Component>()->setProgram(*program);
-            shape->getComponent<Transform>()->setLocalScale({7,2,7});
+            shape->getComponent<Transform>()->setLocalScale({7,2,7});*/
 
 
             //Systems

@@ -4,6 +4,7 @@
 #define TINYOBJLOADER_IMPLEMENTATION
 #include <tinyobj/tiny_obj_loader.h>
 
+
 #include <iostream>
 #include <vector>
 #include <unordered_map>
@@ -21,9 +22,12 @@
 #define MAGENTA CGEngine::Color(255,   0, 255, 255)
 #define YELLOW  CGEngine::Color(255, 255,   0, 255)
 #define CYAN    CGEngine::Color(  0, 255, 255, 255)
-
-bool CGEngine::mesh_utils::loadOBJ(CGEngine::Mesh &mesh, const char* filename) {
-
+CGEngine::Mesh* CGEngine::mesh_utils::getMesh(std::string name)
+{
+    return Meshes[name];
+}
+bool CGEngine::mesh_utils::loadOBJ(std::string name, const char* filename) {
+    CGEngine::Mesh* mesh = new Mesh();
     // We get the parent path since we would like to see if contains any ".mtl" file that define the object materials
     auto parent_path_string = std::filesystem::path(filename).parent_path().string();
 
@@ -99,21 +103,22 @@ bool CGEngine::mesh_utils::loadOBJ(CGEngine::Mesh &mesh, const char* filename) {
     }
 
     // Create and populate the OpenGL objects in the mesh
-    if (mesh.isCreated()) mesh.destroy();
-    mesh.create({CGEngine::setup_buffer_accessors<Vertex>});
-    mesh.setVertexData(0, vertices);
-    mesh.setElementData(elements);
+    if (mesh->isCreated()) mesh->destroy();
+    mesh->create({CGEngine::setup_buffer_accessors<Vertex>});
+    mesh->setVertexData(0, vertices);
+    mesh->setElementData(elements);
+    Meshes[name]=mesh;
     return true;
 }
 
 
-void CGEngine::mesh_utils::Cuboid(Mesh& mesh,
+void CGEngine::mesh_utils::Cuboid(std::string name,
             bool colored_faces,
             const glm::vec3& center,
             const glm::vec3& size,
             const glm::vec2& texture_offset,
             const glm::vec2& texture_tiling){
-
+    CGEngine::Mesh* mesh = new Mesh();
     // These are just temporary variables that will help us populate the vertex array
     glm::vec3 half_size = size * 0.5f;
     glm::vec3 bounds[] = {center - half_size, center + half_size};
@@ -189,15 +194,19 @@ void CGEngine::mesh_utils::Cuboid(Mesh& mesh,
     };
 
     // Create and populate the OpenGL objects in the mesh
-    if (mesh.isCreated()) mesh.destroy();
-    mesh.create({CGEngine::setup_buffer_accessors<Vertex>});
-    mesh.setVertexData(0, vertices);
-    mesh.setElementData(elements);
+    if (mesh->isCreated()) mesh->destroy();
+    mesh->create({CGEngine::setup_buffer_accessors<Vertex>});
+    mesh->setVertexData(0, vertices);
+    mesh->setElementData(elements);
+
+    Meshes[name]=mesh;
+
 };
 
-void CGEngine::mesh_utils::Sphere(CGEngine::Mesh& mesh, const glm::ivec2& segments, bool colored,
+void CGEngine::mesh_utils::Sphere(std::string name, const glm::ivec2& segments, bool colored,
             const glm::vec3& center, float radius,
             const glm::vec2& texture_offset, const glm::vec2& texture_tiling){
+    CGEngine::Mesh* mesh = new Mesh();
 
     std::vector<CGEngine::Vertex> vertices;
     std::vector<GLuint> elements;
@@ -232,16 +241,20 @@ void CGEngine::mesh_utils::Sphere(CGEngine::Mesh& mesh, const glm::ivec2& segmen
     }
 
     // Create and populate the OpenGL objects in the mesh
-    if (mesh.isCreated()) mesh.destroy();
-    mesh.create({CGEngine::setup_buffer_accessors<Vertex>});
-    mesh.setVertexData(0, vertices);
-    mesh.setElementData(elements);
+    if (mesh->isCreated()) mesh->destroy();
+    mesh->create({CGEngine::setup_buffer_accessors<Vertex>});
+    mesh->setVertexData(0, vertices);
+    mesh->setElementData(elements);
+    Meshes[name]=mesh;
+
 }
 
-void CGEngine::mesh_utils::Plane(CGEngine::Mesh& mesh, const glm::ivec2& resolution, bool colored,
+void CGEngine::mesh_utils::Plane(std::string name, const glm::ivec2& resolution, bool colored,
            const glm::vec3& center, const glm::vec2& size,
            const glm::vec2& texture_offset, const glm::vec2& texture_tiling){
     std::vector<CGEngine::Vertex> vertices;
+    CGEngine::Mesh* mesh = new Mesh();
+
     std::vector<GLuint> elements;
 
     glm::ivec2 it; glm::vec3 position = {0, center.y, 0}; glm::vec2 uv;
@@ -275,8 +288,10 @@ void CGEngine::mesh_utils::Plane(CGEngine::Mesh& mesh, const glm::ivec2& resolut
     }
 
     // Create and populate the OpenGL objects in the mesh
-    if (mesh.isCreated()) mesh.destroy();
-    mesh.create({CGEngine::setup_buffer_accessors<Vertex>});
-    mesh.setVertexData(0, vertices);
-    mesh.setElementData(elements);
+    if (mesh->isCreated()) mesh->destroy();
+    mesh->create({CGEngine::setup_buffer_accessors<Vertex>});
+    mesh->setVertexData(0, vertices);
+    mesh->setElementData(elements);
+    Meshes[name]=mesh;
+
 }

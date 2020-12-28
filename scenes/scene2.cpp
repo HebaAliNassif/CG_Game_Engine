@@ -7,13 +7,10 @@
 #include <render_system.h>
 #include <mesh_component.h>
 #include <shape_script.cpp>
-#include <json/json.hpp>
 #include <mesh-utils.hpp>
-#include <material.h>
 #include <resource_manager.h>
-#include <texture/texture.h>
-
-
+#include <material_component.h>
+#include <material/material_assets.h>
 namespace CGEngine
 {
 
@@ -25,14 +22,16 @@ namespace CGEngine
         Mesh model;
         Mesh models;
         Mesh model2;
-        Texture HouseTexture;
-        Texture FloorTexture;
+
+
         scene2()
         {
-            program = Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","shape1");
-            program2 = Resource_Manager::LoadShader("assets/shaders/ex22_texture_sampling/transform.vert","assets/shaders/ex22_texture_sampling/texture.frag","shape3");
-            HouseTexture = Resource_Manager::loadTexture("assets/models/House/House.jpeg",1,"Image");
-            FloorTexture = Resource_Manager::loadTexture("assets/models/CatAlbedo.jpg",1,"Image22");
+            CreateMaterials();
+            Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","simpleShader");
+            Resource_Manager::LoadShader("assets/shaders/ex22_texture_sampling/transform.vert","assets/shaders/ex22_texture_sampling/texture.frag","3dShader");
+
+            CGEngine::mesh_utils::Cuboid("cube",true,glm::vec3(0,0,0),glm::vec3(5,5,5));
+            CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
 
 
             //Camera Entity
@@ -43,33 +42,22 @@ namespace CGEngine
             camera->addComponent<FlyController>();
 
 
-            HouseTexture.bind();
+            //HouseTexture.bind();
+            Entity* Cube = createEntity("Cube");
+            Cube->addComponent<Transform>();
+            Cube->addComponent<Mesh_Component>();
+            Cube->addComponent<Material_Component>()->setMaterialName("default_material");
+            Cube->getComponent<Mesh_Component>()->setMeshModelName("cube");
+            Cube->getComponent<Transform>()->setLocalPosition({0,0,0 });
+
+
             Entity* House = createEntity("House");
             House->addComponent<Transform>();
             House->addComponent<Mesh_Component>();
-            House->addComponent<Material>()->setShaderName("shape3");
-            CGEngine::mesh_utils::loadOBJ(model2, "assets/models/House/House.obj");
-            House->getComponent<Mesh_Component>()->setmesh(model2);
-            House->getComponent<Transform>()->setLocalPosition({0,0,0   });
+            House->addComponent<Material_Component>()->setMaterialName("house_material");
+            House->getComponent<Mesh_Component>()->setMeshModelName("house");
+            House->getComponent<Transform>()->setLocalPosition({0,0,10 });
 
-           /* //checkerBoard(FloorTexture.textureID, {256,256}, {128,128}, {255, 255, 255, 255}, {16, 16, 16, 255});
-
-            //Shape Entity
-            Entity* shape = createEntity("Floor");
-            shape->addComponent<Transform>();
-            shape->addComponent<Mesh_Component>();
-            CGEngine::mesh_utils::Plane(model,{1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
-            FloorTexture.bind();
-            shape->getComponent<Mesh_Component>()->setmesh(model);
-            shape->getComponent<Mesh_Component>()->setProgram(program2);
-            shape->getComponent<Transform>()->setLocalPosition({0,0,0});
-            shape->getComponent<Transform>()->setLocalScale({10,13,10});
-
-
-
-            //HouseTexture.bind();
-
-*/
 
             //Systems
             addSystem<RenderSystem>();

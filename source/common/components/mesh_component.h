@@ -10,20 +10,19 @@
 #include "../ecs/component.h"
 namespace CGEngine {
     class Mesh_Component : public CGEngine::Component {
-        CGEngine::Mesh *model;
-        CGEngine::Shader *program;
+
+        std::string meshModelName;
+
     public:
         Mesh_Component() : Component("MeshC") {
 
         };
 
-        void setmesh(CGEngine::Mesh &mod);
+        const std::string &getMeshModelName() const;
 
-        void setProgram(Shader &prog);
+        void setMeshModelName(const std::string &meshModelName);
 
-        CGEngine::Mesh *getmesh();
 
-        Shader *getProgram();
 
     };
 }

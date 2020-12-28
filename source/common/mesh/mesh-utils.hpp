@@ -7,16 +7,21 @@
 
 namespace CGEngine::mesh_utils {
 
-    // Load an ".obj" file into the mesh
-    bool loadOBJ(Mesh& mesh, const char* filename);
+    //Map for all created meshes
+    static std::map<std::string, Mesh*> Meshes;
 
-    void Cuboid(Mesh& mesh, bool colored_faces = false,
+    Mesh* getMesh(std::string name);
+
+    // Load an ".obj" file into the mesh
+    bool loadOBJ(std::string name, const char* filename);
+
+    void Cuboid( std::string name,bool colored_faces = false,
                 const glm::vec3& center = {0,0,0},
                 const glm::vec3& size = {1,1,1},
                 const glm::vec2& texture_offset = {0, 0},
                 const glm::vec2& texture_tiling = {1, 1});
 
-    void Sphere(Mesh& mesh,
+    void Sphere(std::string name,
                 const glm::ivec2& segments = {32, 16},
                 bool colored = false,
                 const glm::vec3& center = {0,0,0},
@@ -24,7 +29,7 @@ namespace CGEngine::mesh_utils {
                 const glm::vec2& texture_offset = {0, 0},
                 const glm::vec2& texture_tiling = {1, 1});
 
-    void Plane(CGEngine::Mesh& mesh,
+    void Plane(std::string name,
                const glm::ivec2& resolution = {1, 1},
                bool colored = false,
                const glm::vec3& center={0, 0, 0},
