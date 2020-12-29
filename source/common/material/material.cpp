@@ -39,6 +39,8 @@ void CGEngine::Material::bindUniforms() const {
         else if(property.second->Is<MaterialProperty<std::pair<Texture*,Sampler*>>>()) {
             Texture* text = property.second->As<MaterialProperty<std::pair<Texture*,Sampler*>>>()->getValue().first;
             Sampler* sam = property.second->As<MaterialProperty<std::pair<Texture*,Sampler*>>>()->getValue().second;
+            sam->bind();
+            text->bind();
             //Resource_Manager::getShader(shaderName)->set(property.first,);
         }
     }

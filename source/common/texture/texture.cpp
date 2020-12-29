@@ -31,6 +31,7 @@ void CGEngine::Texture::generate(unsigned int width, unsigned int height, unsign
 }
 
 void CGEngine::Texture::bind() const {
+    glActiveTexture(this->textureID);
     glBindTexture(GL_TEXTURE_2D, this->textureID);
 }
 

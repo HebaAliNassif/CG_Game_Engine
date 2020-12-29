@@ -31,18 +31,19 @@ namespace CGEngine
             Resource_Manager::LoadShader("assets/shaders/ex22_texture_sampling/transform.vert","assets/shaders/ex22_texture_sampling/texture.frag","3dShader");
 
             CGEngine::mesh_utils::Cuboid("cube",true,glm::vec3(0,0,0),glm::vec3(5,5,5));
-            CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
+            CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),2.0f);
 
+            CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
+            CGEngine::mesh_utils::loadOBJ("cat", "assets/models/Cat.obj");
 
             //Camera Entity
             Entity* camera = createEntity("Main Camera");
-            camera->addComponent<Transform>()->setPosition(10,10,10);
+            camera->addComponent<Transform>()->setPosition(10,10,0);
             camera->getComponent<Transform>()->setForward({0, 0, 0});
             camera->addComponent<Camera>();
             camera->addComponent<FlyController>();
 
 
-            //HouseTexture.bind();
             Entity* Cube = createEntity("Cube");
             Cube->addComponent<Transform>();
             Cube->addComponent<Mesh_Component>();
@@ -57,6 +58,24 @@ namespace CGEngine
             House->addComponent<Material_Component>()->setMaterialName("house_material");
             House->getComponent<Mesh_Component>()->setMeshModelName("house");
             House->getComponent<Transform>()->setLocalPosition({0,0,10 });
+
+            Entity* Sphere = createEntity("Sphere");
+            Sphere->addComponent<Transform>();
+            Sphere->addComponent<Mesh_Component>();
+            Sphere->addComponent<Material_Component>()->setMaterialName("default_material");
+            Sphere->getComponent<Mesh_Component>()->setMeshModelName("sphere");
+            Sphere->getComponent<Transform>()->setLocalPosition({0,5,0 });
+
+            Entity* Cat = createEntity("Cat");
+            Cat->addComponent<Transform>();
+            Cat->addComponent<Mesh_Component>();
+            Cat->addComponent<Material_Component>()->setMaterialName("cat_material");
+            Cat->getComponent<Mesh_Component>()->setMeshModelName("cat");
+            Cat->getComponent<Transform>()->setLocalPosition({0,0,-10 });
+            Cat->getComponent<Transform>()->setLocalScale(5.0f);
+            Cat->getComponent<Transform>()->setLocalEulerAngles(0,90,0);
+
+
 
 
             //Systems

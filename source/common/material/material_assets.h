@@ -5,6 +5,12 @@
 #include <texture/sampler.h>
 namespace CGEngine {
     static void CreateMaterials() {
+
+        Texture* HouseTexture = Resource_Manager::loadTexture("assets/models/House/House.jpeg",1,"HouseTexture");
+        Texture* CatTexture = Resource_Manager::loadTexture("assets/models/CatAlbedo.jpg",1,"CatTexture");
+
+        Sampler* sampler = new Sampler();
+
         CGEngine::Material *defaultMaterial = CGEngine::Material::createMaterial("default_material");
         defaultMaterial->setShaderName("simpleShader");
         defaultMaterial->addProperty<glm::vec3>("diffuse", glm::vec3(0, 0, 0));
@@ -15,12 +21,13 @@ namespace CGEngine {
         //std::cout<<"After update: "<<defaultMaterial->getPropertyValue<float>("specular")<<"\n";
 
 
-        Texture* HouseTexture = Resource_Manager::loadTexture("assets/models/House/House.jpeg",1,"HouseTexture");
-        HouseTexture->bind();
-        Sampler* sampler = new Sampler();
         CGEngine::Material *houseMaterial = CGEngine::Material::createMaterial("house_material");
         houseMaterial->setShaderName("3dShader");
-        houseMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(HouseTexture,sampler));
+        houseMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(HouseTexture, sampler));
+
+        CGEngine::Material *catMaterial = CGEngine::Material::createMaterial("cat_material");
+        catMaterial->setShaderName("3dShader");
+        catMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(CatTexture, sampler));
 
     }
 }
