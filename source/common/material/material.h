@@ -80,6 +80,18 @@ namespace CGEngine {
         }
 
         template<class T>
+        T getPropertyValue(std::string propertyName) {
+           // MaterialProperty<T>* property = new MaterialProperty<T>(value);
+            return (listOfMaterialProperties[propertyName]->As<MaterialProperty<T>>())->getValue();
+        }
+
+        template<class T>
+        void updatePropertyValue(std::string propertyName, T value) {
+            // MaterialProperty<T>* property = new MaterialProperty<T>(value);
+             (listOfMaterialProperties[propertyName]->As<MaterialProperty<T>>())->setValue(value);
+        }
+
+        template<class T>
         T *As() {
             return dynamic_cast<T *>(this);
         }
