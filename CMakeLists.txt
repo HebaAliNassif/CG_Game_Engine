@@ -47,7 +47,7 @@ set(COMMON_SOURCES
         source/common/texture/sampler.cpp
         source/common/texture/sampler_base.cpp
         source/common/material/material.cpp
-        )
+        source/common/components/light.cpp)
 
 
 include_directories(

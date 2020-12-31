@@ -4,6 +4,7 @@
 #include <systems/fly-controller.h>
 #include <application_manager.h>
 #include <camera.h>
+#include <light.h>
 #include <render_system.h>
 #include <mesh_component.h>
 #include <shape_script.cpp>
@@ -29,6 +30,7 @@ namespace CGEngine
             CreateMaterials();
             Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","simpleShader");
             Resource_Manager::LoadShader("assets/shaders/ex22_texture_sampling/transform.vert","assets/shaders/ex22_texture_sampling/texture.frag","3dShader");
+            Resource_Manager::LoadShader("assets/shaders/vshaders/light_transform.vert","assets/shaders/fshaders/light_array.frag","LightShader");
 
             CGEngine::mesh_utils::Cuboid("cube",true,glm::vec3(0,0,0),glm::vec3(5,5,5));
             CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),2.0f);
@@ -74,6 +76,8 @@ namespace CGEngine
             Cat->getComponent<Transform>()->setLocalPosition({0,0,-10 });
             Cat->getComponent<Transform>()->setLocalScale(5.0f);
             Cat->getComponent<Transform>()->setLocalEulerAngles(0,90,0);
+            Cat->addComponent<Light>();
+            Cat->getComponent<Light>()->setLightType(LightType::POINT);
 
 
 
