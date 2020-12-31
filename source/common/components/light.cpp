@@ -28,12 +28,15 @@ bool CGEngine::Light::IsEnabled() const
     return enabled;
 }
 
-/*
-struct attentuation CGEngine::Light::getAttenuation() const
+
+struct CGEngine::Light::attenuation_struct CGEngine::Light::getAttenuation() const
 {
     return attenuation;
 }
-*/
+struct CGEngine::Light::spot_angle_struct CGEngine::Light::getSpotAngle() const
+{
+    return spot_angle;
+}
 
 
 void CGEngine::Light::setLightType(LightType type_v) {
@@ -88,6 +91,14 @@ void CGEngine::Light::onAdded() {
     //initialize();
 
     }
+}
+
+bool CGEngine::Light::isEnabled() const {
+    return enabled;
+}
+
+void CGEngine::Light::setEnabled(bool enabled) {
+    Light::enabled = enabled;
 }
 
 /*

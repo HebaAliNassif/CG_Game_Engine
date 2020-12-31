@@ -26,18 +26,24 @@ namespace CGEngine {
     class Light : public Component {
     private:
         LightType type;
-        bool enabled;
-        glm::vec3 diffuse, specular, ambient;
+        bool enabled = true;
+    public:
+        bool isEnabled() const;
+
+        void setEnabled(bool enabled);
+
+    private:
+        glm::vec3 diffuse =  {1,1,1}, specular = {1,1,1}, ambient = {0.5f, 0.1f, 0.1f};
         // This affects how the light will dim out as we go further from the light.
         // The formula is light_received = light_emitted / (a*d^2 + b*d + c) where a, b, c are the quadratic, linear and constant factors respectively.
-        struct {
-            float constant, linear, quadratic;
+        struct attenuation_struct{
+            float constant = 0, linear = 0, quadratic = 1;
         } attenuation; // Used for Point and Spot Lights only
         // This specifies the inner and outer cone of the spot light.
         // The light power is 0 outside the outer cone, the light power is full inside the inner cone.
         // The light power is interpolated in between the inner and outer cone.
-        struct {
-            float inner, outer;
+        struct spot_angle_struct{
+            float inner = glm::pi<float>()/4, outer = glm::pi<float>()/2;
         } spot_angle; // Used for Spot Lights only
 
     public:
@@ -57,7 +63,7 @@ namespace CGEngine {
 
         bool IsEnabled() const;
 
-        glm::vec2 getSpotAngle() const;
+        spot_angle_struct getSpotAngle() const;
 
 
         void setAmbient(glm::vec3 ambient);
@@ -82,10 +88,8 @@ namespace CGEngine {
 
         //void initialize();
 
-        void bindUniforms(std::vector<Light> lights) const;
 
-        struct attentuation getAttenuation() const;
-
+        struct attenuation_struct getAttenuation() const;
 
     };
 

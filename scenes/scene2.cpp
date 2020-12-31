@@ -30,7 +30,9 @@ namespace CGEngine
             CreateMaterials();
             Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","simpleShader");
             Resource_Manager::LoadShader("assets/shaders/ex22_texture_sampling/transform.vert","assets/shaders/ex22_texture_sampling/texture.frag","3dShader");
-            Resource_Manager::LoadShader("assets/shaders/vshaders/light_transform.vert","assets/shaders/fshaders/light_array.frag","LightShader");
+            Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex30_light_array/light_array.frag","DirectionalLightShader");
+            //Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex29_light/point_light.frag","PointLightShader");
+            //Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex29_light/spot_light.frag","SpotLightShader");
 
             CGEngine::mesh_utils::Cuboid("cube",true,glm::vec3(0,0,0),glm::vec3(5,5,5));
             CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),2.0f);
@@ -46,12 +48,12 @@ namespace CGEngine
             camera->addComponent<FlyController>();
 
 
-            Entity* Cube = createEntity("Cube");
+            /*Entity* Cube = createEntity("Cube");
             Cube->addComponent<Transform>();
             Cube->addComponent<Mesh_Component>();
             Cube->addComponent<Material_Component>()->setMaterialName("default_material");
             Cube->getComponent<Mesh_Component>()->setMeshModelName("cube");
-            Cube->getComponent<Transform>()->setLocalPosition({0,0,0 });
+            Cube->getComponent<Transform>()->setLocalPosition({0,0,0 });*/
 
 
             Entity* House = createEntity("House");
@@ -76,10 +78,12 @@ namespace CGEngine
             Cat->getComponent<Transform>()->setLocalPosition({0,0,-10 });
             Cat->getComponent<Transform>()->setLocalScale(5.0f);
             Cat->getComponent<Transform>()->setLocalEulerAngles(0,90,0);
-            Cat->addComponent<Light>();
-            Cat->getComponent<Light>()->setLightType(LightType::POINT);
 
 
+            Entity* light = createEntity("light");
+            light->addComponent<Transform>()->setForward(glm::vec3(-1,-1,-1));
+            light->addComponent<Light>();
+            light->getComponent<Light>()->setLightType(LightType::DIRECTIONAL);
 
 
             //Systems

@@ -30,10 +30,12 @@ namespace CGEngine {
         T value;
     public:
         MaterialProperty( T value) : value(value) {}
+
         void bindProperty(Shader* shader) override
         {
-           // if(dynamic_cast<float>(value))shader->set("heba",dynamic_cast<float>(value));
+          // shader->set("heba",(T)(value));
         }
+
         T getValue() const {
             return value;
         }

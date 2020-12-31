@@ -12,7 +12,7 @@ namespace CGEngine {
         Sampler* sampler = new Sampler();
 
         CGEngine::Material *defaultMaterial = CGEngine::Material::createMaterial("default_material");
-        defaultMaterial->setShaderName("simpleShader");
+        defaultMaterial->setShaderName("DirectionalLightShader");
         defaultMaterial->addProperty<glm::vec3>("diffuse", glm::vec3(0, 0, 0));
         defaultMaterial->addProperty<float>("specular", 50.0f);
 
