@@ -12,22 +12,41 @@ namespace CGEngine {
         Sampler* sampler = new Sampler();
 
         CGEngine::Material *defaultMaterial = CGEngine::Material::createMaterial("default_material");
-        defaultMaterial->setShaderName("DirectionalLightShader");
-        defaultMaterial->addProperty<glm::vec3>("diffuse", glm::vec3(0, 0, 0));
-        defaultMaterial->addProperty<float>("specular", 50.0f);
+        defaultMaterial->setShaderName("SimpleLightShader");
+        defaultMaterial->addProperty<glm::vec3>("diffuse",{0.96, 0.9, 0.64});
+        defaultMaterial->addProperty<glm::vec3>("specular",{0.5,0.3,0.1});
+        defaultMaterial->addProperty<glm::vec3>("ambient",{0.5,0.3,0.1});
+        defaultMaterial->addProperty<float>("shininess",5.0f);
 
-        //std::cout<<"Before update: "<<defaultMaterial->getPropertyValue<float>("specular")<<"\n";
-        //defaultMaterial->updatePropertyValue<float>("specular",60.0f);
-        //std::cout<<"After update: "<<defaultMaterial->getPropertyValue<float>("specular")<<"\n";
 
 
         CGEngine::Material *houseMaterial = CGEngine::Material::createMaterial("house_material");
-        houseMaterial->setShaderName("3dShader");
+        houseMaterial->setShaderName("TexturedLightShader");
         houseMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(HouseTexture, sampler));
+        houseMaterial->addProperty<glm::vec3>("albedo_tint",{1.0f, 1.0f, 1.0f});
+        houseMaterial->addProperty<glm::vec3>("specular_tint",{1.0f, 1.0f, 1.0f});
+        houseMaterial->addProperty<glm::vec3>("emissive_tint",{1.0f, 1.0f, 1.0f});
+        houseMaterial->addProperty<glm::vec2>("roughness_range",{0.0f, 1.0f});
+        houseMaterial->addProperty<std::string>("albedo_map","white");
+        houseMaterial->addProperty<std::string>("specular_map","black");
+        houseMaterial->addProperty<std::string>("roughness_map","white");
+        houseMaterial->addProperty<std::string>("ambient_occlusion_map","white");
+        houseMaterial->addProperty<std::string>("emissive_map","black");
+
+
 
         CGEngine::Material *catMaterial = CGEngine::Material::createMaterial("cat_material");
-        catMaterial->setShaderName("3dShader");
+        catMaterial->setShaderName("TexturedLightShader");
         catMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(CatTexture, sampler));
+        catMaterial->addProperty<glm::vec3>("albedo_tint",{1.0f, 1.0f, 1.0f});
+        catMaterial->addProperty<glm::vec3>("specular_tint",{1.0f, 1.0f, 1.0f});
+        catMaterial->addProperty<glm::vec3>("emissive_tint",{1.0f, 1.0f, 1.0f});
+        catMaterial->addProperty<glm::vec2>("roughness_range",{0.0f, 1.0f});
+        catMaterial->addProperty<std::string>("albedo_map","white");
+        catMaterial->addProperty<std::string>("specular_map","black");
+        catMaterial->addProperty<std::string>("roughness_map","white");
+        catMaterial->addProperty<std::string>("ambient_occlusion_map","white");
+        catMaterial->addProperty<std::string>("emissive_map","black");
 
     }
 }

@@ -15,9 +15,8 @@ namespace CGEngine
     {
     public:
         RenderSystem(){};
-        void update(double delta_time) override {
-            glClearColor(0, 0, 0, 0);
-
+        void onAdded() override
+        {
             glEnable(GL_DEPTH_TEST);
             glDepthFunc(GL_LEQUAL);
 
@@ -25,7 +24,12 @@ namespace CGEngine
             glCullFace(GL_BACK);
             glFrontFace(GL_CCW);
 
-            glClearColor(0, 0, 0, 1);
+            glClearColor(0.0,0.1,0.0, 1);
+        }
+        void update(double delta_time) override {
+
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
             std::unordered_map<std::string, Entity *> ListOfEntities = this->scene->ListOfEntities;
             std::vector<Light *> lights;
 
@@ -51,14 +55,31 @@ namespace CGEngine
 
                         if (transform && mesh && camera && mat) {
                             glUseProgram(mat->getShader()->programID);
-                            mat->getShader()->set("tint", glm::vec4(1, 1, 1, 1));
-                            mat->getShader()->set("transform",
-                                                  camera->getVPMatrix() * transform->getLocalToWorldMatrix());
-                            mat->bindUniforms();
 
+                            mat->getShader()->set("camera_position", camera->getEyePosition());
+                            mat->getShader()->set("view_projection", camera->getVPMatrix());
+
+                            mat->getShader()->set("object_to_world", transform->getLocalToWorldMatrix());
+                            glm::mat4 obj = transform->getLocalToWorldMatrix();
+                            mat->getShader()->set("object_to_world_inv_transpose", glm::inverse(obj), true);
+                            mat->bindUniforms();
                             bindLightUniforms(lights, mat->getShader());
 
                             (CGEngine::mesh_utils::getMesh(mesh->getMeshModelName()))->draw();
+
+                        }
+                        else if(transform && camera && mat)
+                        {
+                            glUseProgram(mat->getShader()->programID);
+
+                            mat->getShader()->set("camera_position", camera->getEyePosition());
+                            mat->getShader()->set("view_projection", camera->getVPMatrix());
+
+                            mat->getShader()->set("object_to_world", transform->getLocalToWorldMatrix());
+                            glm::mat4 obj = transform->getLocalToWorldMatrix();
+                            mat->getShader()->set("object_to_world_inv_transpose", glm::inverse(obj), true);
+                            mat->bindUniforms();
+                            bindLightUniforms(lights, mat->getShader());
 
                         }
                     }
@@ -71,8 +92,9 @@ namespace CGEngine
             int light_index = 0;
             const int MAX_LIGHT_COUNT = 16;
 
-            for(auto light : lights) {
+            for(auto &light : lights) {
                 if(!light->isEnabled()) continue;
+
                 std::string prefix = "lights[" + std::to_string(light_index) + "].";
 
                 program->set(prefix + "diffuse", light->getDiffuse());
@@ -83,13 +105,14 @@ namespace CGEngine
 
                 switch (light->getLightType()) {
                     case LightType::DIRECTIONAL:
-                        program->set(prefix + "direction", glm::normalize(light->light_transform->getForward()));
+                        program->set(prefix + "direction",  glm::normalize(light->light_transform->getForward()));
                         break;
                     case LightType::POINT:
+
                         program->set(prefix + "position", light->light_transform->getPosition());
-                        program->set(prefix + "attenuation_constant", light->getAttenuation().constant);
-                        program->set(prefix + "attenuation_linear", light->getAttenuation().linear);
-                        program->set(prefix + "attenuation_quadratic", light->getAttenuation().quadratic);
+                        program->set(prefix + "attenuation_constant",(float) light->getAttenuation().constant);
+                        program->set(prefix + "attenuation_linear",(float) light->getAttenuation().linear);
+                        program->set(prefix + "attenuation_quadratic", (float)light->getAttenuation().quadratic);
                         break;
                     case LightType::SPOT:
                         program->set(prefix + "position", light->light_transform->getPosition());

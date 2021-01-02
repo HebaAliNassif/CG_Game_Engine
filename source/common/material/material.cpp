@@ -16,25 +16,25 @@ void CGEngine::Material::bindUniforms() const {
     for(auto &property: listOfMaterialProperties)
     {
         if(property.second->Is<MaterialProperty<float>>()) {
-            Resource_Manager::getShader(shaderName)->set(property.first,property.second->As<MaterialProperty<float>>()->getValue());
+            Resource_Manager::getShader(shaderName)->set("material."+property.first,property.second->As<MaterialProperty<float>>()->getValue());
         }
         else if(property.second->Is<MaterialProperty<glm::vec3>>()) {
-            Resource_Manager::getShader(shaderName)->set(property.first,property.second->As<MaterialProperty<glm::vec3>>()->getValue());
+            Resource_Manager::getShader(shaderName)->set("material."+property.first,property.second->As<MaterialProperty<glm::vec3>>()->getValue());
         }
         else if(property.second->Is<MaterialProperty<bool>>()) {
-            Resource_Manager::getShader(shaderName)->set(property.first,property.second->As<MaterialProperty<bool>>()->getValue());
+            Resource_Manager::getShader(shaderName)->set("material."+property.first,property.second->As<MaterialProperty<bool>>()->getValue());
         }
         else if(property.second->Is<MaterialProperty<int>>()) {
-            Resource_Manager::getShader(shaderName)->set(property.first,property.second->As<MaterialProperty<int>>()->getValue());
+            Resource_Manager::getShader(shaderName)->set("material."+property.first,property.second->As<MaterialProperty<int>>()->getValue());
         }
         else if(property.second->Is<MaterialProperty<glm::vec2>>()) {
-            Resource_Manager::getShader(shaderName)->set(property.first,property.second->As<MaterialProperty<glm::vec2>>()->getValue());
+            Resource_Manager::getShader(shaderName)->set("material."+property.first,property.second->As<MaterialProperty<glm::vec2>>()->getValue());
         }
         else if(property.second->Is<MaterialProperty<glm::vec4>>()) {
-            Resource_Manager::getShader(shaderName)->set(property.first,property.second->As<MaterialProperty<glm::vec4>>()->getValue());
+            Resource_Manager::getShader(shaderName)->set("material."+property.first,property.second->As<MaterialProperty<glm::vec4>>()->getValue());
         }
         else if(property.second->Is<MaterialProperty<glm::mat4>>()) {
-            Resource_Manager::getShader(shaderName)->set(property.first,property.second->As<MaterialProperty<glm::mat4>>()->getValue());
+            Resource_Manager::getShader(shaderName)->set("material."+property.first,property.second->As<MaterialProperty<glm::mat4>>()->getValue());
         }
         else if(property.second->Is<MaterialProperty<std::pair<Texture*,Sampler*>>>()) {
             Texture* text = property.second->As<MaterialProperty<std::pair<Texture*,Sampler*>>>()->getValue().first;

@@ -65,7 +65,7 @@ namespace CGEngine {
         glm::mat4 getModelMatrix() const;
 
             //Matrix that transforms a point from local space into world space.
-        const glm::mat4 getLocalToWorldMatrix() const;
+         glm::mat4 getLocalToWorldMatrix() const;
 
         //Matrix that transforms a point from world space into local space.
         const glm::mat4 getWorldToLocalMatrix() const;

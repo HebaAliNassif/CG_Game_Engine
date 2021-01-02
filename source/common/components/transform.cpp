@@ -73,7 +73,7 @@ void CGEngine::Transform::setLocalScale(const float scale) {
     setLocalScale(scale, scale, scale);
 }
 
-const glm::mat4 CGEngine::Transform::getLocalToWorldMatrix() const {
+glm::mat4 CGEngine::Transform::getLocalToWorldMatrix() const {
 
     glm::mat4 ModelMatrix = getModelMatrix();
 

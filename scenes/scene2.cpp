@@ -28,32 +28,33 @@ namespace CGEngine
         scene2()
         {
             CreateMaterials();
-            Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","simpleShader");
-            Resource_Manager::LoadShader("assets/shaders/ex22_texture_sampling/transform.vert","assets/shaders/ex22_texture_sampling/texture.frag","3dShader");
-            Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex30_light_array/light_array.frag","DirectionalLightShader");
-            //Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex29_light/point_light.frag","PointLightShader");
+            //Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","simpleShader");
+            //Resource_Manager::LoadShader("assets/shaders/ex22_texture_sampling/transform.vert","assets/shaders/ex22_texture_sampling/texture.frag","3dShader");
+            Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex30_light_array/light_array.frag","SimpleLightShader");
+            Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex32_textured_material/light_array.frag","TexturedLightShader");
             //Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex29_light/spot_light.frag","SpotLightShader");
 
             CGEngine::mesh_utils::Cuboid("cube",true,glm::vec3(0,0,0),glm::vec3(5,5,5));
-            CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),2.0f);
+            CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),1.0f);
+            CGEngine::mesh_utils::Plane("plane", {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
 
             CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
             CGEngine::mesh_utils::loadOBJ("cat", "assets/models/Cat.obj");
 
             //Camera Entity
             Entity* camera = createEntity("Main Camera");
-            camera->addComponent<Transform>()->setPosition(10,10,0);
+            camera->addComponent<Transform>()->setPosition(10,10,10);
             camera->getComponent<Transform>()->setForward({0, 0, 0});
             camera->addComponent<Camera>();
             camera->addComponent<FlyController>();
 
 
-            /*Entity* Cube = createEntity("Cube");
-            Cube->addComponent<Transform>();
-            Cube->addComponent<Mesh_Component>();
-            Cube->addComponent<Material_Component>()->setMaterialName("default_material");
-            Cube->getComponent<Mesh_Component>()->setMeshModelName("cube");
-            Cube->getComponent<Transform>()->setLocalPosition({0,0,0 });*/
+            Entity* Plane = createEntity("Plane");
+            Plane->addComponent<Transform>()->setLocalScale(100,1,100);
+            Plane->addComponent<Mesh_Component>();
+            Plane->addComponent<Material_Component>()->setMaterialName("default_material");
+            Plane->getComponent<Mesh_Component>()->setMeshModelName("plane");
+            Plane->getComponent<Transform>()->setLocalPosition({0,0,0 });
 
 
             Entity* House = createEntity("House");
@@ -80,10 +81,18 @@ namespace CGEngine
             Cat->getComponent<Transform>()->setLocalEulerAngles(0,90,0);
 
 
-            Entity* light = createEntity("light");
-            light->addComponent<Transform>()->setForward(glm::vec3(-1,-1,-1));
-            light->addComponent<Light>();
-            light->getComponent<Light>()->setLightType(LightType::DIRECTIONAL);
+            Entity* directional_light = createEntity("light_directional");
+            directional_light->addComponent<Transform>();
+            directional_light->addComponent<Light>()->setLightType(LightType::DIRECTIONAL);
+
+            Entity* point_light = createEntity("light_point");
+            point_light->addComponent<Transform>()->setPosition(0,1,0);
+            point_light->addComponent<Light>()->setLightType(LightType::POINT);
+
+            Entity* spot_light = createEntity("light_spot");
+            spot_light->addComponent<Transform>()->setPosition(0,1,-10);
+            spot_light->addComponent<Light>()->setLightType(LightType::SPOT);
+            spot_light->getComponent<Light>()->setSpotAngle(1,1);
 
 
             //Systems
@@ -97,9 +106,10 @@ namespace CGEngine
         }
         ~scene2()
         {
+            getEntity("Main Camera")->getComponent<FlyController>()->release();
             program->destroy();
             model.destroy();
-            //camera_controller.release();
+
         }
         void checkerBoard(GLuint texture, glm::ivec2 size, glm::ivec2 patternSize, Color color1, Color color2){
             auto* data = new Color[size.x * size.y];
