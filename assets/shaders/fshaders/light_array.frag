@@ -63,7 +63,7 @@ struct Light {
 uniform Material material;
 uniform Light lights[MAX_LIGHT_COUNT];
 uniform int light_count;
-
+uniform float alpha;
 out vec4 frag_color;
 
 void main() {
@@ -111,5 +111,6 @@ void main() {
         accumulated_light += (diffuse + specular) * attenuation + ambient;
     }
 
-    frag_color = fsin.color * vec4(accumulated_light, 1.0f);
+    frag_color = fsin.color * vec4(accumulated_light,alpha);
+
 }

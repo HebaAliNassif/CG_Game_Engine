@@ -23,8 +23,6 @@ namespace CGEngine
         Mesh model;
         Mesh models;
         Mesh model2;
-
-
         scene2()
         {
             CreateMaterials();
@@ -33,14 +31,12 @@ namespace CGEngine
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex30_light_array/light_array.frag","SimpleLightShader");
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex32_textured_material/light_array.frag","TexturedLightShader");
             //Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex29_light/spot_light.frag","SpotLightShader");
-
             CGEngine::mesh_utils::Cuboid("cube",true,glm::vec3(0,0,0),glm::vec3(5,5,5));
             CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),1.0f);
             CGEngine::mesh_utils::Plane("plane", {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
 
             CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
             CGEngine::mesh_utils::loadOBJ("cat", "assets/models/Cat.obj");
-
             //Camera Entity
             Entity* camera = createEntity("Main Camera");
             camera->addComponent<Transform>()->setPosition(10,10,10);

@@ -6,6 +6,7 @@
 #include <resource_manager.h>
 #include <map>
 #include <any>
+#include <RenderState.h>
 namespace CGEngine {
 
     class BaseMaterialProperty
@@ -55,6 +56,7 @@ namespace CGEngine {
     };
 
     class Material  {
+        RenderState *renderState;
     public:
         //Map for all created Material
         static std::map<std::string, Material*>listOfMaterials;
@@ -68,13 +70,15 @@ namespace CGEngine {
         Material(){}
         //TODO
         //Add the render state reference
+
         std::string shaderName;
         const std::string &getShaderName() const;
         Shader* getShader() const;
         int GetShaderID() const;
         void setShaderName(const std::string &shaderName);
         void bindUniforms() const;
-
+        void setRenderState(RenderState* state);
+        RenderState *getRenderState();
         template<class T>
         void addProperty(std::string propertyName, T value) {
             MaterialProperty<T>* property = new MaterialProperty<T>(value);

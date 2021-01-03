@@ -100,7 +100,9 @@ bool CGEngine::Light::isEnabled() const {
 void CGEngine::Light::setEnabled(bool enabled) {
     Light::enabled = enabled;
 }
-
+//float CGEngine::Light::getattenuationConstant() {
+//    return attenuation.constant;
+//}
 /*
 void CGEngine::Light::bindUniforms(std::vector<Light> lights) const {
     int light_index = 0;

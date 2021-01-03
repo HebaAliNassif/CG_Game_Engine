@@ -22,7 +22,7 @@ set(IMGUI_SOURCES
         vendor/imgui/imgui_widgets.cpp
         vendor/imgui/imgui_impl/imgui_impl_glfw.cpp
         vendor/imgui/imgui_impl/imgui_impl_opengl3.cpp
-        )
+        source/common/components/RenderState.cpp source/common/components/RenderState.h)
 
 
 set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})

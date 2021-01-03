@@ -63,4 +63,11 @@ CGEngine::Material *CGEngine::Material::createMaterial(std::string materialName)
 CGEngine::Material *CGEngine::Material::getMaterial(std::string materialName) {
     return listOfMaterials[materialName];
 }
+void CGEngine::Material::setRenderState(RenderState* state) {
 
+    renderState = state;
+}
+CGEngine::RenderState* CGEngine::Material::getRenderState()
+{
+    return renderState;
+}
