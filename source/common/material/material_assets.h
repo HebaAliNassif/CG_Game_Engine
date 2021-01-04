@@ -8,8 +8,7 @@ namespace CGEngine {
 
         Texture* HouseTexture = Resource_Manager::loadTexture("assets/models/House/House.jpeg",1,"HouseTexture");
         Texture* CatTexture = Resource_Manager::loadTexture("assets/models/CatAlbedo.jpg",1,"CatTexture");
-
-        Sampler* sampler = new Sampler();
+        Sampler* sampler = Resource_Manager::createSampler("simpleSampler");
 
         CGEngine::Material *defaultMaterial = CGEngine::Material::createMaterial("default_material");
         defaultMaterial->setShaderName("SimpleLightShader");

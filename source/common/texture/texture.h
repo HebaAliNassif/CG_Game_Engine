@@ -21,6 +21,8 @@ namespace CGEngine {
         // binds the texture as the current active GL_TEXTURE_2D texture object
         void bind() const;
 
+         ~Texture();
+
         // texture image dimensions
         unsigned int Width, Height; // width and height of loaded image in pixels
 

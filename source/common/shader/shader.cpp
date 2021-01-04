@@ -124,3 +124,7 @@ void CGEngine::Shader::set(const std::string &uniform, glm::mat4 value, GLboolea
     glUniformMatrix4fv(getUniformLocation(uniform),  1, transpose, glm::value_ptr(value));
 }
 
+CGEngine::Shader::~Shader() {
+    glDeleteProgram(programID);
+}
+

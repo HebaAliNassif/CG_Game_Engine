@@ -40,9 +40,10 @@ namespace CGEngine {
         GLFWwindow * window = nullptr;      // Pointer to the window created by GLFW using "glfwCreateWindow()".
         Keyboard keyboard;                  // Instance of "our" keyboard class that handles keyboard functionalities.
         Mouse mouse;                        // Instance of "our" mouse class that handles mouse functionalities.
+
+    public:
         Scene* current_scene = nullptr;
         Scene* next_scene = nullptr;
-    public:
         Scene *getNextScene() const;
 
         void goToScene(Scene *nextScene);

@@ -37,6 +37,8 @@ namespace CGEngine::mesh_utils {
                const glm::vec2& texture_offset = {0, 0},
                const glm::vec2& texture_tiling = {1, 1});
 
+    void clearMeshes();
+
 
 }
 

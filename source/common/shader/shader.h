@@ -46,6 +46,8 @@ namespace CGEngine {
             programID = 0;
         }
 
+        virtual ~Shader();
+
     private:
         std::map<std::string, GLuint> uniform_location_cache;
 

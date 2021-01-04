@@ -35,3 +35,7 @@ void CGEngine::Texture::bind() const {
     glBindTexture(GL_TEXTURE_2D, this->textureID);
 }
 
+CGEngine::Texture::~Texture() {
+    glDeleteTextures(1, &this->textureID);
+}
+

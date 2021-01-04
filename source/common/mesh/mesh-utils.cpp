@@ -295,3 +295,10 @@ void CGEngine::mesh_utils::Plane(std::string name, const glm::ivec2& resolution,
     Meshes[name]=mesh;
 
 }
+
+void CGEngine::mesh_utils::clearMeshes()
+{
+    for (auto iter : Meshes)
+        iter.second->destroy();
+    Meshes.clear();
+}
