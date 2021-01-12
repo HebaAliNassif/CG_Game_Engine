@@ -97,3 +97,12 @@ void CGEngine::Scene::onStart() {
 
 }
 
+void CGEngine::Scene::getEntitiesHavingComponent(std::string componentName, std::vector<Entity *> &result) {
+    for(auto &entity: ListOfEntities)
+    {
+        for (auto comp : entity.second->ListOfComponents) {
+            if(comp->name == componentName)result.push_back(entity.second);
+        }
+    }
+}
+

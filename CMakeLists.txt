@@ -47,7 +47,10 @@ set(COMMON_SOURCES
         source/common/texture/sampler.cpp
         source/common/texture/sampler_base.cpp
         source/common/material/material.cpp
-        source/common/components/light.cpp)
+        source/common/components/light.cpp
+        source/common/maze/maze_generator.cpp
+        source/common/components/box_collider.cpp
+        )
 
 
 include_directories(

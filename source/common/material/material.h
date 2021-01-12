@@ -68,8 +68,6 @@ namespace CGEngine {
         static Material* getMaterial(std::string materialName);
 
         Material(){}
-        //TODO
-        //Add the render state reference
 
         std::string shaderName;
         const std::string &getShaderName() const;

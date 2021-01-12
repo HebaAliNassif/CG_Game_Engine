@@ -36,8 +36,7 @@ namespace CGEngine {
 
         // The field_of_view_y is in radians and is only used for perspective cameras
         // The orthographic_height is only used for orthographic cameras
-        float field_of_view_y = glm::radians(
-                90.0f), orthographic_height = 2.0f, aspect_ratio = 1.0f, near = 0.01f, far = 100.0f;
+        float field_of_view_y = 2.0f, orthographic_height = 30.0f, aspect_ratio = 1.0f, near = 0.1f, far = 100.0f;
 
         glm::mat4 V{}, P{}, VP{};
         float fov_sensitivity = glm::pi<float>()/10;
@@ -49,7 +48,7 @@ namespace CGEngine {
 
         //Reference to the transform component of the camera.
         Transform *camera_transform = nullptr;
-        bool scroll = true;
+        bool scroll = false;
 
 
         Camera() : Component("camera") {

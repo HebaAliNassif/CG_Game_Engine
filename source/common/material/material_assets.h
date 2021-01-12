@@ -51,8 +51,8 @@ namespace CGEngine {
 
 
         CGEngine::Material *catMaterial = CGEngine::Material::createMaterial("cat_material");
-        catMaterial->setShaderName("TexturedLightShader");
-        catMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(CatTexture, sampler));
+        catMaterial->setShaderName("TransShader");
+        //catMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(CatTexture, sampler));
         catMaterial->addProperty<glm::vec3>("albedo_tint",{1.0f, 1.0f, 1.0f});
         catMaterial->addProperty<glm::vec3>("specular_tint",{1.0f, 1.0f, 1.0f});
         catMaterial->addProperty<glm::vec3>("emissive_tint",{1.0f, 1.0f, 1.0f});
@@ -70,13 +70,13 @@ namespace CGEngine {
         R->setCullFrontFace(GL_CCW);
         R->setCull(true);
         R->setDepth(true);
-//        R2->setTransparent(true);
-//        R2->setBlend(true);
-//        R2->setAlpha(0.2f);
-//        R2->setBlendEnable(GL_BLEND);
-//        R2->setBlendFunction(GL_FUNC_ADD);
-//        R2->setBlendSource(GL_SRC_ALPHA);
-//        R2->setBlendDestination(GL_ONE_MINUS_SRC_ALPHA);
+        R2->setTransparent(true);
+        R2->setBlend(true);
+        R2->setAlpha(0.2f);
+        R2->setBlendEnable(GL_BLEND);
+        R2->setBlendFunction(GL_FUNC_ADD);
+        R2->setBlendSource(GL_SRC_ALPHA);
+        R2->setBlendDestination(GL_ONE_MINUS_SRC_ALPHA);
         catMaterial->setRenderState(R);
     }
 }

@@ -5,6 +5,7 @@
 #include "vector"
 #include <ecs/entity.h>
 #include <system.h>
+#include <vector>
 #include <transform.h>
 #include <application_manager.h>
 #include <../serialization/json_base.h>
@@ -41,6 +42,9 @@ namespace CGEngine {
 
         //Return the specified entity from the scene.
         Entity* getEntity(std::string name);
+
+        //Return the specified entity from the scene.
+        void getEntitiesHavingComponent(std::string componentName, std::vector<Entity*> &result);
 
         //Removes an entity from the scene.
         void destroyEntity(std::string name);

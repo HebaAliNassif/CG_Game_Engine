@@ -111,6 +111,7 @@ void main() {
         accumulated_light += (diffuse + specular) * attenuation + ambient;
     }
 
-    frag_color = fsin.color * vec4(accumulated_light,alpha);
+    //frag_color = fsin.color * vec4(accumulated_light,alpha);
+    frag_color = vec4(1,1,1,0.5);
 
 }
