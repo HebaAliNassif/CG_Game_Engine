@@ -15,6 +15,7 @@
 #include <material/material_assets.h>
 #include "maze/maze_generator.h"
 #include <right_left_controller.h>
+#include <righ_left_camera_controller.h>
 #include <list>
 #include <box_collider.h>
 namespace CGEngine
@@ -46,8 +47,9 @@ namespace CGEngine
 
             //Camera Entity
             camera = createEntity("Main Camera");
-            camera->addComponent<Transform>()->setPosition(13,30,19);
+            camera->addComponent<Transform>();
             camera->addComponent<Camera>()->setType(CameraType::Perspective);
+            //camera->addComponent<RightLeftController>();
 
             Entity* Plane = createEntity("Plane");
             Plane->addComponent<Transform>()->setLocalScale(100,1,100);
@@ -114,20 +116,36 @@ namespace CGEngine
             Player->addComponent<Box_Collider>()->setMaxExtent(Player->getComponent<Transform>()->getPosition() + glm::vec3(1, 1, 1));
             Player->getComponent<Box_Collider>()->setMinExtent(Player->getComponent<Transform>()->getPosition() - glm::vec3(1, 1, 1));
 
-            camera->getComponent<Transform>()->setForward(mazeGenerator.GetStartPosition());
-
-             playerCollider = Player->getComponent<Box_Collider>();
+            playerCollider = Player->getComponent<Box_Collider>();
             playerTransform = Player->getComponent<Transform>();
+
+
+
 
         }
         void  start() override
         {
+            glm::vec3 Position = playerTransform->getPosition();
+            camera->getComponent<Transform>()->setForward(glm::vec3(0,-1,0));
+            camera->getComponent<Transform>()->setPosition(Position.x, 15,Position.z);
+            camera->getComponent<Transform>()->setForward(Position);
+            camera->getComponent<Transform>()->setPosition(Position.x, 15,Position.z);
+            camera->addComponent<RightLeftCamerController>();
+            //std::cout<<"start\t"<<Position.x<<"\t"<<Position.y<<"\t"<<Position.z<<"\n";
+            //std::cout<<"camera start\t"<<camera->getComponent<Transform>()->getPosition().x<<"\t"<<camera->getComponent<Transform>()->getPosition().y<<"\t"<<camera->getComponent<Transform>()->getPosition().z<<"\n";
+            //std::cout<<"camera forward start\t"<<camera->getComponent<Transform>()->getForward().x<<"\t"<<camera->getComponent<Transform>()->getForward().y<<"\t"<<camera->getComponent<Transform>()->getForward().z<<"\n";
+
+
         }
         void update(double deltaTime) override  {
-            glm::vec3 centerPosition = playerTransform->getPosition();
-            camera->getComponent<Transform>()->setForward(centerPosition);
-            camera->getComponent<Transform>()->setPosition(centerPosition.x, 15,centerPosition.z);
+            //glm::vec3 centerPosition = playerTransform->getPosition();
+            //std::cout<<"update\t"<<centerPosition.x<<"\t"<<centerPosition.y<<"\t"<<centerPosition.z<<"\n";
+            //std::cout<<"camera update\t"<<camera->getComponent<Transform>()->getPosition().x<<"\t"<<camera->getComponent<Transform>()->getPosition().y<<"\t"<<camera->getComponent<Transform>()->getPosition().z<<"\n";
+            //std::cout<<"camera forward update\t"<<camera->getComponent<Transform>()->getForward().x<<"\t"<<camera->getComponent<Transform>()->getForward().y<<"\t"<<camera->getComponent<Transform>()->getForward().z<<"\n";
 
+            //camera->getComponent<Transform>()->setForward(centerPosition);
+            //camera->getComponent<Transform>()->setPosition(centerPosition.x, 15,centerPosition.z);
+/*
             playerCollider->setMinExtent( playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
             playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
 
@@ -161,7 +179,7 @@ namespace CGEngine
                     playerCollider->setMinExtent( playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
                     playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
                 }
-            }
+            }*/
 
         }
 

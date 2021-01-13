@@ -1,5 +1,5 @@
-#ifndef RIGHT_LEFT_CONTROLLER_H
-#define RIGHT_LEFT_CONTROLLER_H
+#ifndef RIGH_LEFT_CAMERA_CONTROLLER_H
+#define RIGH_LEFT_CAMERA_CONTROLLER_H
 #include <glm/glm.hpp>
 #include <glm/gtc/constants.hpp>
 #include <glm/trigonometric.hpp>
@@ -11,7 +11,7 @@
 namespace CGEngine {
 
     // Allows you to control an object freely in world space
-    class RightLeftController: public Component {
+    class RightLeftCamerController: public Component {
     private:
         Application_Manager* app;
         Transform* entity_transform = nullptr;
@@ -23,7 +23,7 @@ namespace CGEngine {
         bool mouse_locked = false;
 
     public:
-        RightLeftController():Component("RightLeftController"){};
+        RightLeftCamerController():Component("RightLeftCamerController"){};
         bool freeze_movement_right = false;
         bool freeze_movement_left = false;
         bool freeze_movement_down = false;
@@ -62,16 +62,16 @@ namespace CGEngine {
             glm::vec3 current_sensitivity = this->position_sensitivity;
             if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= speedup_factor;
 
-            if(!freeze_movement_right&&app->getKeyboard().isPressed(GLFW_KEY_UP ))
+            if(!freeze_movement_right&&app->getKeyboard().isPressed(GLFW_KEY_UP))
             {
-                position += front * ((float)delta_time * current_sensitivity.z);
+                position += up * ((float)delta_time * current_sensitivity.z);
                 if(freeze_movement_left)freeze_movement_left = false;
                 //if(freeze_movement_up)freeze_movement_up = false;
                 //if(freeze_movement_down)freeze_movement_down = false;
             }
-            if(!freeze_movement_left&&app->getKeyboard().isPressed( GLFW_KEY_DOWN))
+            if(!freeze_movement_left&&app->getKeyboard().isPressed(GLFW_KEY_DOWN))
             {
-                position -= front * ((float)delta_time * current_sensitivity.z);
+                position -= up * ((float)delta_time * current_sensitivity.z);
                 if(freeze_movement_right)freeze_movement_right=false;
                 //if(freeze_movement_up)freeze_movement_up=false;
                 //if(freeze_movement_down)freeze_movement_down=false;
@@ -111,4 +111,4 @@ namespace CGEngine {
 
     };
 }
-#endif //RIGHT_LEFT_CONTROLLER_H
+#endif //RIGH_LEFT_CAMERA_CONTROLLER_H
