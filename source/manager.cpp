@@ -17,7 +17,7 @@ class manager : public CGEngine::Application_Manager {
 
     // onInitialize() function is called once before the application loop
     void onInitialize() override {
-        CGEngine::Scene *scene2 = new CGEngine::scene2();
+        CGEngine::Scene *scene2 = new CGEngine::scene2(this);
         goToScene(scene2);
         scene=2;
     }

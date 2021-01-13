@@ -14,11 +14,16 @@ namespace CGEngine {
     using EntityID = uint32_t;
     class Scene {
     private:
-        Application_Manager* manager;
     protected:
 
         EntityID m_LastEntityID = 0;
+        Application_Manager* manager;
+
     public:
+        explicit Scene(Application_Manager* manager)
+        {
+            this->manager=manager;
+        }
         std::unordered_map<std::string,Entity*> ListOfEntities;
 
         std::vector<System*> ListOfSystems;

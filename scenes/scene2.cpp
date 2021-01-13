@@ -29,9 +29,9 @@ namespace CGEngine
         Entity* Player;
         Box_Collider* playerCollider;
         Transform* playerTransform;
+        Transform* cameraTransform;
         Entity* camera;
-        scene2()
-        {
+        scene2(Application_Manager *manager) : Scene(manager) {
             CreateMaterials();
 
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex30_light_array/light_array.frag","SimpleLightShader");
@@ -39,7 +39,7 @@ namespace CGEngine
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/fshaders/light_array.frag","TransShader");
 
             CGEngine::mesh_utils::Cuboid("cube",true,glm::vec3(0,0,0),glm::vec3(2.0f,1,2.0f));
-            CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),0.8f);
+            CGEngine::mesh_utils::Sphere("sphere",glm::vec2(50,50),true,glm::vec3(0,0,0),0.6f);
             CGEngine::mesh_utils::Plane("plane", {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
 
             CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
@@ -47,9 +47,9 @@ namespace CGEngine
 
             //Camera Entity
             camera = createEntity("Main Camera");
-            camera->addComponent<Transform>();
+            cameraTransform = camera->addComponent<Transform>();
             camera->addComponent<Camera>()->setType(CameraType::Perspective);
-            //camera->addComponent<RightLeftController>();
+            camera->addComponent<RightLeftController>();
 
             Entity* Plane = createEntity("Plane");
             Plane->addComponent<Transform>()->setLocalScale(100,1,100);
@@ -123,6 +123,8 @@ namespace CGEngine
 
 
         }
+        RightLeftController* movePlayerContoller ;
+        RightLeftCamerController* moveCamerContoller;
         void  start() override
         {
             glm::vec3 Position = playerTransform->getPosition();
@@ -131,55 +133,71 @@ namespace CGEngine
             camera->getComponent<Transform>()->setForward(Position);
             camera->getComponent<Transform>()->setPosition(Position.x, 15,Position.z);
             camera->addComponent<RightLeftCamerController>();
-            //std::cout<<"start\t"<<Position.x<<"\t"<<Position.y<<"\t"<<Position.z<<"\n";
-            //std::cout<<"camera start\t"<<camera->getComponent<Transform>()->getPosition().x<<"\t"<<camera->getComponent<Transform>()->getPosition().y<<"\t"<<camera->getComponent<Transform>()->getPosition().z<<"\n";
-            //std::cout<<"camera forward start\t"<<camera->getComponent<Transform>()->getForward().x<<"\t"<<camera->getComponent<Transform>()->getForward().y<<"\t"<<camera->getComponent<Transform>()->getForward().z<<"\n";
-
+            movePlayerContoller = Player->getComponent<RightLeftController>();
+            moveCamerContoller = camera->getComponent<RightLeftCamerController>();
 
         }
+        glm::vec3  position_sensitivity = {5.0f, 5.0f, 5.0f};
+        bool Collide(glm::vec3 point)
+        {
+            for (auto &entity: mazeBoxs)
+            {
+                Box_Collider* box = entity->getComponent<Box_Collider>();
+                glm::vec3 distance1 = box->getMinExtent() - playerCollider->getMaxExtent();
+                glm::vec3 distance2 = playerCollider->getMinExtent() - box->getMaxExtent();
+                glm::vec3 distance = glm::vec3(glm::max(distance1.x, distance2.x), glm::max(distance1.y, distance2.y), glm::max(distance1.z, distance2.z));
+                float maxDistance = glm::max(distance.x, glm::max(distance.y, distance.z));
+                if (maxDistance < 0) {
+                    return true;
+                }
+            }
+            return false;
+        }
         void update(double deltaTime) override  {
-            //glm::vec3 centerPosition = playerTransform->getPosition();
-            //std::cout<<"update\t"<<centerPosition.x<<"\t"<<centerPosition.y<<"\t"<<centerPosition.z<<"\n";
-            //std::cout<<"camera update\t"<<camera->getComponent<Transform>()->getPosition().x<<"\t"<<camera->getComponent<Transform>()->getPosition().y<<"\t"<<camera->getComponent<Transform>()->getPosition().z<<"\n";
-            //std::cout<<"camera forward update\t"<<camera->getComponent<Transform>()->getForward().x<<"\t"<<camera->getComponent<Transform>()->getForward().y<<"\t"<<camera->getComponent<Transform>()->getForward().z<<"\n";
 
-            //camera->getComponent<Transform>()->setForward(centerPosition);
-            //camera->getComponent<Transform>()->setPosition(centerPosition.x, 15,centerPosition.z);
-/*
             playerCollider->setMinExtent( playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
             playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
 
+            bool flag_hit = false;
             for (auto &entity: mazeBoxs)
             {
                 Box_Collider* box = entity->getComponent<Box_Collider>();
                 glm::vec3 boxPosition = entity->getComponent<Transform>()->getPosition();
                 glm::vec3 playerPosition = playerTransform->getPosition();
                 HitInfo hit = Player->getComponent<Box_Collider>()->onCollision(box);
-                RightLeftController* movePlayerContoller = Player->getComponent<RightLeftController>();
-                if (hit.isColliding == true)
+                if (hit.isColliding)
                 {
-                    //std::cout<<"Box\t"<<entity->getComponent<Transform>()->getPosition().x<<"\t"<<entity->getComponent<Transform>()->getPosition().y<<"\t"<<entity->getComponent<Transform>()->getPosition().z<<"\n";
-                    //std::cout<<"Player\t"<<Player->getComponent<Transform>()->getPosition().x<<"\t"<<Player->getComponent<Transform>()->getPosition().y<<"\t"<<Player->getComponent<Transform>()->getPosition().z<<"\n";
-                    if(boxPosition.z < playerPosition.z && !movePlayerContoller->freeze_movement_left)
-                    {
-                        movePlayerContoller->freeze_movement_right = true;
-                    }
-                    if(boxPosition.z > playerPosition.z && !movePlayerContoller->freeze_movement_right)
-                    {
-                        movePlayerContoller->freeze_movement_left = true;
-                    }
-                    if(boxPosition.x < playerPosition.x && !movePlayerContoller->freeze_movement_down)
+                    flag_hit =  true;
+                    if(  boxPosition.z <= playerPosition.z && !moveCamerContoller->freeze_movement_up && !movePlayerContoller->freeze_movement_down)
                     {
                         movePlayerContoller->freeze_movement_up = true;
+                        moveCamerContoller->freeze_movement_up = true;
                     }
-                    if(boxPosition.x > playerPosition.x && !movePlayerContoller->freeze_movement_up)
+                    if(boxPosition.z > playerPosition.z && !movePlayerContoller->freeze_movement_down&&!movePlayerContoller->freeze_movement_up)
                     {
                         movePlayerContoller->freeze_movement_down = true;
+                        moveCamerContoller->freeze_movement_down = true;
+                    }
+                    if(boxPosition.x >= playerPosition.x && !movePlayerContoller->freeze_movement_right&& !movePlayerContoller->freeze_movement_left)
+                    {
+                        movePlayerContoller->freeze_movement_right = true;
+                        moveCamerContoller->freeze_movement_right = true;
+                    }
+                    if(boxPosition.x <= playerPosition.x && !movePlayerContoller->freeze_movement_left&& !movePlayerContoller->freeze_movement_right)
+                    {
+                        movePlayerContoller->freeze_movement_left = true;
+                        moveCamerContoller->freeze_movement_left = true;
                     }
                     playerCollider->setMinExtent( playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
                     playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
                 }
-            }*/
+            }
+            if(!flag_hit)
+            {
+                 movePlayerContoller->resetcontrollers();
+                moveCamerContoller->resetcontrollers();
+            }
+
 
         }
 

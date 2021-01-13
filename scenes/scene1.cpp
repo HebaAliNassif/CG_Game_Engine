@@ -14,8 +14,7 @@ namespace CGEngine
         Shader* program;
         Mesh model;
 
-        scene1()
-        {
+        scene1(Application_Manager *manager) : Scene(manager) {
             program = Resource_Manager::LoadShader("assets/shaders/vshaders/transform.vert","assets/shaders/fshaders/tint.frag","shape1");
 
             //Camera Entity

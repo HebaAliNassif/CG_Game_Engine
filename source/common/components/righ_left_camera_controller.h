@@ -62,32 +62,32 @@ namespace CGEngine {
             glm::vec3 current_sensitivity = this->position_sensitivity;
             if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= speedup_factor;
 
-            if(!freeze_movement_right&&app->getKeyboard().isPressed(GLFW_KEY_UP))
+            if(!freeze_movement_up&&app->getKeyboard().isPressed(GLFW_KEY_UP))
             {
                 position += up * ((float)delta_time * current_sensitivity.z);
-                if(freeze_movement_left)freeze_movement_left = false;
+                if(freeze_movement_down)freeze_movement_down = false;
                 //if(freeze_movement_up)freeze_movement_up = false;
                 //if(freeze_movement_down)freeze_movement_down = false;
             }
-            if(!freeze_movement_left&&app->getKeyboard().isPressed(GLFW_KEY_DOWN))
+            if(!freeze_movement_down&&app->getKeyboard().isPressed(GLFW_KEY_DOWN))
             {
                 position -= up * ((float)delta_time * current_sensitivity.z);
-                if(freeze_movement_right)freeze_movement_right=false;
+                if(freeze_movement_up)freeze_movement_up=false;
                 //if(freeze_movement_up)freeze_movement_up=false;
                 //if(freeze_movement_down)freeze_movement_down=false;
             }
 
-            if(!freeze_movement_down && app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
+            if(!freeze_movement_right && app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
             {
                 position += right * ((float)delta_time * current_sensitivity.x);
-                if(freeze_movement_up)freeze_movement_up=false;
+                if(freeze_movement_left)freeze_movement_left=false;
                 //if(freeze_movement_right)freeze_movement_right=false;
                 //if(freeze_movement_left)freeze_movement_left=false;
             }
-            if(!freeze_movement_up && app->getKeyboard().isPressed(GLFW_KEY_LEFT))
+            if(!freeze_movement_left && app->getKeyboard().isPressed(GLFW_KEY_LEFT))
             {
                 position -= right * ((float)delta_time * current_sensitivity.x);
-                if(freeze_movement_down)freeze_movement_down=false;
+                if(freeze_movement_right)freeze_movement_right=false;
                 //if(freeze_movement_right)freeze_movement_right=false;
                 //if(freeze_movement_left)freeze_movement_left=false;
             }
@@ -108,6 +108,14 @@ namespace CGEngine {
         }
 
         void setPositionSensitivity(glm::vec3 sensitivity){this->position_sensitivity = sensitivity;}
+
+        void resetcontrollers()
+        {
+            freeze_movement_right = false;
+            freeze_movement_left = false;
+            freeze_movement_down = false;
+            freeze_movement_up = false;
+        }
 
     };
 }
