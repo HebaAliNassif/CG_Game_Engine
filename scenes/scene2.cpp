@@ -18,6 +18,7 @@
 #include <righ_left_camera_controller.h>
 #include <list>
 #include <box_collider.h>
+#include <enemy_movement.h>
 namespace CGEngine
 {
 
@@ -27,9 +28,15 @@ namespace CGEngine
 
         vector<Entity*> mazeBoxs;
         Entity* Player;
+        Entity* Enemy;
+
         Box_Collider* playerCollider;
         Transform* playerTransform;
         Transform* cameraTransform;
+
+        Box_Collider* enemyCollider;
+        Transform* enemyTransform;
+
         Entity* camera;
         scene2(Application_Manager *manager) : Scene(manager) {
             CreateMaterials();
@@ -119,8 +126,56 @@ namespace CGEngine
             playerCollider = Player->getComponent<Box_Collider>();
             playerTransform = Player->getComponent<Transform>();
 
+/*
+            Enemy = createEntity("Enemy");
+
+            Enemy->addComponent<Transform>();
+            Enemy->addComponent<Mesh_Component>()->setMeshModelName("sphere");
+            Enemy->addComponent<Material_Component>()->setMaterialName("default_material");
+            Enemy->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition());
+            Enemy->addComponent<Box_Collider>()->setMaxExtent(Enemy->getComponent<Transform>()->getPosition() + glm::vec3(0.75f, 0.75f, 0.75f));
+            Enemy->getComponent<Box_Collider>()->setMinExtent(Enemy->getComponent<Transform>()->getPosition() - glm::vec3(0.75f, 0.75f, 0.75f));
+
+            Enemy->getComponent<Transform>()->setPosition(5, 0, 1);
+
+ */
+            vector<PathInWorld> availablePathes;
+            vector<Path> pathesAsIndices = mazeGenerator.GetAvailablePathes();
 
 
+            for (auto i : pathesAsIndices)
+                availablePathes.push_back(PathInWorld(
+                        UtilityFunctions::IndicesToWorldCoordiantes(i.start, mazeGenerator.GetWidth(), mazeGenerator.GetHeight()),
+                        UtilityFunctions::IndicesToWorldCoordiantes(i.end, mazeGenerator.GetWidth(), mazeGenerator.GetHeight())));
+
+            for (int i = 0; i < availablePathes.size(); ++i)
+            {
+                Enemy = createEntity("Enemy"+i);
+
+                Enemy->addComponent<Transform>();
+                Enemy->addComponent<Mesh_Component>()->setMeshModelName("sphere");
+                Enemy->addComponent<Material_Component>()->setMaterialName("default_material");
+                Enemy->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition());
+                Enemy->addComponent<Box_Collider>()->setMaxExtent(Enemy->getComponent<Transform>()->getPosition() + glm::vec3(1, 1, 1));
+                Enemy->getComponent<Box_Collider>()->setMinExtent(Enemy->getComponent<Transform>()->getPosition() - glm::vec3(1, 1, 1));
+                Enemy->getComponent<Transform>()->setPosition(availablePathes[i].start.x, 0, availablePathes[i].start.z);
+
+                Enemy->addComponent<EnemyMovement>()->setIsHorizontal((availablePathes[i].start.z - availablePathes[i].end.z) == 0);
+                Enemy->getComponent<EnemyMovement>()->setStart(availablePathes[i].start);
+                Enemy->getComponent<EnemyMovement>()->setEnd(availablePathes[i].end);
+
+
+                //Enemy->getComponent<Transform>()->setPosition((availablePathes[i].start, 0, 1), 0, 1);
+
+                //Enemy->getComponent<Transform>()->setPosition(mazeGenerator.GetEmptyPositions()[i]);
+
+/*
+                for (std::vector<char>::const_iterator j = mazeGenerator.GetEmptyPositions()[j].begin(); j != mazeGenerator.GetEmptyPositions()[j].end(); ++i)
+                    std::cout << *k << ' ';
+
+                //std::cout << mazeGenerator.GetEmptyPositions()[i];
+*/
+            }
 
         }
         RightLeftController* movePlayerContoller ;
@@ -154,7 +209,6 @@ namespace CGEngine
             return false;
         }
         void update(double deltaTime) override  {
-
             playerCollider->setMinExtent( playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
             playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
 
@@ -173,7 +227,7 @@ namespace CGEngine
                         movePlayerContoller->freeze_movement_up = true;
                         moveCamerContoller->freeze_movement_up = true;
                     }
-                    if(boxPosition.z > playerPosition.z && !movePlayerContoller->freeze_movement_down&&!movePlayerContoller->freeze_movement_up)
+                    if(boxPosition.x > playerPosition.x && !movePlayerContoller->freeze_movement_up)
                     {
                         movePlayerContoller->freeze_movement_down = true;
                         moveCamerContoller->freeze_movement_down = true;
