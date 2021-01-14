@@ -9,6 +9,7 @@ namespace CGEngine {
         Texture* HouseTexture = Resource_Manager::loadTexture("assets/models/House/House.jpeg",1,"HouseTexture");
         Texture* CatTexture = Resource_Manager::loadTexture("assets/models/CatAlbedo.jpg",1,"CatTexture");
         Sampler* sampler = Resource_Manager::createSampler("simpleSampler");
+        Texture* PacmanTexture = Resource_Manager::loadTexture("assets/models/Textures/Chomp_AlbedoTransparency.png",1,"CatTexture");
 
         CGEngine::Material *defaultMaterial = CGEngine::Material::createMaterial("default_material");
         defaultMaterial->setShaderName("SimpleLightShader");
@@ -29,7 +30,7 @@ namespace CGEngine {
 
         CGEngine::Material *houseMaterial = CGEngine::Material::createMaterial("house_material");
         houseMaterial->setShaderName("TexturedLightShader");
-        houseMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(HouseTexture, sampler));
+        houseMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(PacmanTexture, sampler));
         houseMaterial->addProperty<glm::vec3>("albedo_tint",{1.0f, 1.0f, 1.0f});
         houseMaterial->addProperty<glm::vec3>("specular_tint",{1.0f, 1.0f, 1.0f});
         houseMaterial->addProperty<glm::vec3>("emissive_tint",{1.0f, 1.0f, 1.0f});

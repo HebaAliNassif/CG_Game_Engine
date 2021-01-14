@@ -50,7 +50,7 @@ set(COMMON_SOURCES
         source/common/components/light.cpp
         source/common/maze/maze_generator.cpp
         source/common/components/box_collider.cpp
-        source/common/entities/Enemy.cpp source/common/entities/Enemy.h source/common/components/enemy_movement.h)
+        )
 
 
 include_directories(

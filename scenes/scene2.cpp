@@ -27,6 +27,7 @@ namespace CGEngine
     public:
 
         vector<Entity*> mazeBoxs;
+        vector<Entity*> mazeEnemies;
         Entity* Player;
         Entity* Enemy;
 
@@ -36,6 +37,7 @@ namespace CGEngine
 
         Box_Collider* enemyCollider;
         Transform* enemyTransform;
+
 
         Entity* camera;
         scene2(Application_Manager *manager) : Scene(manager) {
@@ -50,7 +52,9 @@ namespace CGEngine
             CGEngine::mesh_utils::Plane("plane", {1, 1}, false, {0, 0, 0}, {1, 1}, {0, 0}, {100, 100});
 
             CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
-            CGEngine::mesh_utils::loadOBJ("cat", "assets/models/Cat.obj");
+            CGEngine::mesh_utils::loadOBJ("pacman", "assets/models/chomp.obj");
+            CGEngine::mesh_utils::loadOBJ("enemy", "assets/models/ghost.obj");
+
 
             //Camera Entity
             camera = createEntity("Main Camera");
@@ -116,8 +120,8 @@ namespace CGEngine
 
             Player = createEntity("Player");
             Player->addComponent<Transform>();
-            Player->addComponent<Mesh_Component>()->setMeshModelName("sphere");
-            Player->addComponent<Material_Component>()->setMaterialName("default_material");
+            Player->addComponent<Mesh_Component>()->setMeshModelName("pacman");
+            Player->addComponent<Material_Component>()->setMaterialName("house_material");
             Player->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition());
             Player->addComponent<RightLeftController>();
             Player->addComponent<Box_Collider>()->setMaxExtent(Player->getComponent<Transform>()->getPosition() + glm::vec3(1, 1, 1));
@@ -125,20 +129,6 @@ namespace CGEngine
 
             playerCollider = Player->getComponent<Box_Collider>();
             playerTransform = Player->getComponent<Transform>();
-
-/*
-            Enemy = createEntity("Enemy");
-
-            Enemy->addComponent<Transform>();
-            Enemy->addComponent<Mesh_Component>()->setMeshModelName("sphere");
-            Enemy->addComponent<Material_Component>()->setMaterialName("default_material");
-            Enemy->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition());
-            Enemy->addComponent<Box_Collider>()->setMaxExtent(Enemy->getComponent<Transform>()->getPosition() + glm::vec3(0.75f, 0.75f, 0.75f));
-            Enemy->getComponent<Box_Collider>()->setMinExtent(Enemy->getComponent<Transform>()->getPosition() - glm::vec3(0.75f, 0.75f, 0.75f));
-
-            Enemy->getComponent<Transform>()->setPosition(5, 0, 1);
-
- */
             vector<PathInWorld> availablePathes;
             vector<Path> pathesAsIndices = mazeGenerator.GetAvailablePathes();
 
@@ -153,28 +143,16 @@ namespace CGEngine
                 Enemy = createEntity("Enemy"+i);
 
                 Enemy->addComponent<Transform>();
-                Enemy->addComponent<Mesh_Component>()->setMeshModelName("sphere");
-                Enemy->addComponent<Material_Component>()->setMaterialName("default_material");
-                Enemy->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition());
+                Enemy->addComponent<Mesh_Component>()->setMeshModelName("enemy");
+                Enemy->addComponent<Material_Component>()->setMaterialName("house_material");
                 Enemy->addComponent<Box_Collider>()->setMaxExtent(Enemy->getComponent<Transform>()->getPosition() + glm::vec3(1, 1, 1));
                 Enemy->getComponent<Box_Collider>()->setMinExtent(Enemy->getComponent<Transform>()->getPosition() - glm::vec3(1, 1, 1));
-                Enemy->getComponent<Transform>()->setPosition(availablePathes[i].start.x, 0, availablePathes[i].start.z);
+                Enemy->getComponent<Transform>()->setPosition(availablePathes[i].start.x, mazeGenerator.GetStartPosition().y, availablePathes[i].start.z);
 
                 Enemy->addComponent<EnemyMovement>()->setIsHorizontal((availablePathes[i].start.z - availablePathes[i].end.z) == 0);
                 Enemy->getComponent<EnemyMovement>()->setStart(availablePathes[i].start);
                 Enemy->getComponent<EnemyMovement>()->setEnd(availablePathes[i].end);
-
-
-                //Enemy->getComponent<Transform>()->setPosition((availablePathes[i].start, 0, 1), 0, 1);
-
-                //Enemy->getComponent<Transform>()->setPosition(mazeGenerator.GetEmptyPositions()[i]);
-
-/*
-                for (std::vector<char>::const_iterator j = mazeGenerator.GetEmptyPositions()[j].begin(); j != mazeGenerator.GetEmptyPositions()[j].end(); ++i)
-                    std::cout << *k << ' ';
-
-                //std::cout << mazeGenerator.GetEmptyPositions()[i];
-*/
+                mazeEnemies.push_back(Enemy);
             }
 
         }
@@ -208,10 +186,17 @@ namespace CGEngine
             }
             return false;
         }
+        void updateEnemyColliders()
+        {
+            for (auto &enemy: mazeEnemies)
+            {
+                enemy->getComponent<Box_Collider>()->setMinExtent( enemy->getComponent<Transform>()->getPosition() - vec3(0.5f, 0.5f, 0.5f));
+                enemy->getComponent<Box_Collider>()->setMaxExtent(enemy->getComponent<Transform>()->getPosition() + vec3(0.5f, 0.5f, 0.5f));
+            }
+        }
         void update(double deltaTime) override  {
-            playerCollider->setMinExtent( playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
+            playerCollider->setMinExtent(playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
             playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
-
             bool flag_hit = false;
             for (auto &entity: mazeBoxs)
             {
@@ -248,11 +233,18 @@ namespace CGEngine
             }
             if(!flag_hit)
             {
-                 movePlayerContoller->resetcontrollers();
+                movePlayerContoller->resetcontrollers();
                 moveCamerContoller->resetcontrollers();
             }
+            updateEnemyColliders();
 
-
+            for (auto &enemy: mazeEnemies) {
+                Box_Collider* box = enemy->getComponent<Box_Collider>();
+                HitInfo hit = Player->getComponent<Box_Collider>()->onCollision(box);
+                if (hit.isColliding) {
+                    cout<<"Game Over\n";
+                }
+            }
         }
 
         void onExit() override
