@@ -122,10 +122,10 @@ namespace CGEngine
             Player->addComponent<Transform>();
             Player->addComponent<Mesh_Component>()->setMeshModelName("pacman");
             Player->addComponent<Material_Component>()->setMaterialName("house_material");
-            Player->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition());
+            Player->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition().x, 0.6, mazeGenerator.GetStartPosition().z);
             Player->addComponent<RightLeftController>();
-            Player->addComponent<Box_Collider>()->setMaxExtent(Player->getComponent<Transform>()->getPosition() + glm::vec3(1, 1, 1));
-            Player->getComponent<Box_Collider>()->setMinExtent(Player->getComponent<Transform>()->getPosition() - glm::vec3(1, 1, 1));
+            Player->addComponent<Box_Collider>()->setMaxExtent(Player->getComponent<Transform>()->getPosition() + glm::vec3(0.6, 1, 0.6));
+            Player->getComponent<Box_Collider>()->setMinExtent(Player->getComponent<Transform>()->getPosition() - glm::vec3(0.6, 1, 0.6));
 
             playerCollider = Player->getComponent<Box_Collider>();
             playerTransform = Player->getComponent<Transform>();
@@ -194,17 +194,100 @@ namespace CGEngine
                 enemy->getComponent<Box_Collider>()->setMaxExtent(enemy->getComponent<Transform>()->getPosition() + vec3(0.5f, 0.5f, 0.5f));
             }
         }
+
+        enum Direction {
+            Front,
+            RIGHT,
+            Back,
+            LEFT
+        };
+        typedef std::tuple<bool, Direction, glm::vec3> Collision;
+
+        Direction VectorDirection(glm::vec3 target)
+        {
+            glm::vec3 compass[] = {
+                    glm::vec3(0.0f, 0.0f, -1.0f),	// front
+                    glm::vec3(1.0f, 0.0f, 0.0f),	// right
+                    glm::vec3(0.0f, 0.0f, 1.0f),	// back
+                    glm::vec3(-1.0f, 0.0f, 0.0f)	// left
+            };
+            float max = 0.0f;
+            unsigned int best_match = -1;
+            for (unsigned int i = 0; i < 4; i++)
+            {
+                float dot_product = glm::dot(glm::normalize(target), compass[i]);
+                if (dot_product > max)
+                {
+                    max = dot_product;
+                    best_match = i;
+                }
+            }
+            return (Direction)best_match;
+        }
+        Collision  CheckCollision(Transform* one, Transform *two) // AABB - Circle collision
+        {
+            // get center point circle first
+            glm::vec3 center(one->getPosition().x, 0.6f, one->getPosition().z);
+
+            // calculate AABB info (center, half-extents)
+            glm::vec3 aabb_half_extents(2/ 2.0f, 0.5f,2 / 2.0f);
+            glm::vec3 aabb_center(two->getPosition());
+
+            // get difference vector between both centers
+            glm::vec3 difference = center - aabb_center;
+            glm::vec3 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
+
+            // add clamped value to AABB_center and we get the value of box closest to circle
+            glm::vec3 closest = aabb_center + clamped;
+
+            // retrieve vector between center circle and closest point AABB and check if length <= radius
+            difference = closest - center;
+           // return glm::length(difference) < 0.65f;
+            if (glm::length(difference) <= 0.7f)
+                return std::make_tuple(true, VectorDirection(difference), difference);
+            else
+                return std::make_tuple(false, Front, glm::vec3(0.0f, 0.0f, 0.0f));
+        }
+
         void update(double deltaTime) override  {
             playerCollider->setMinExtent(playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
             playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
+            //std::cout<<"Center: "<<playerTransform->getPosition().x<<"\t"<<playerTransform->getPosition().y<<"\t"<<playerTransform->getPosition().z<<"\n";
             bool flag_hit = false;
-            for (auto &entity: mazeBoxs)
-            {
-                Box_Collider* box = entity->getComponent<Box_Collider>();
+            for (auto &entity: mazeBoxs) {
+                Box_Collider *box = entity->getComponent<Box_Collider>();
                 glm::vec3 boxPosition = entity->getComponent<Transform>()->getPosition();
                 glm::vec3 playerPosition = playerTransform->getPosition();
-                HitInfo hit = Player->getComponent<Box_Collider>()->onCollision(box);
-                if (hit.isColliding)
+                //std::cout<<playerTransform->getRight().x<<"\t"<<playerTransform->getRight().y<<"\t"<<playerTransform->getRight().z<<"\n";
+                //HitInfo hit = Player->getComponent<Box_Collider>()->onCollision(box);
+                Collision result = CheckCollision(playerTransform, entity->getComponent<Transform>());
+                if (std::get<0>(result)) {
+                    flag_hit =  true;
+                    //std::cout << std::get<1>(result) << "\n";
+                    if(std::get<1>(result) == 0)
+                    {
+                        movePlayerContoller->freeze_movement_up = true;
+                        moveCamerContoller->freeze_movement_up = true;
+                    }
+                    else if(std::get<1>(result) == 1)
+                    {
+                        movePlayerContoller->freeze_movement_right = true;
+                        moveCamerContoller->freeze_movement_right = true;
+                    }
+                    else if(std::get<1>(result) == 2)
+                    {
+                        movePlayerContoller->freeze_movement_down = true;
+                        moveCamerContoller->freeze_movement_down = true;
+                    }
+                    else if(std::get<1>(result) == 3)
+                    {
+                        movePlayerContoller->freeze_movement_left = true;
+                        moveCamerContoller->freeze_movement_left = true;
+                    }
+                    //std::cout << std::get<1>(result) << "\n";
+                }
+
+                /*if (hit.isColliding)
                 {
                     flag_hit =  true;
                     if(  boxPosition.z <= playerPosition.z && !moveCamerContoller->freeze_movement_up && !movePlayerContoller->freeze_movement_down)
@@ -229,7 +312,7 @@ namespace CGEngine
                     }
                     playerCollider->setMinExtent( playerTransform->getPosition() - vec3(0.5f, 0.5f, 0.5f));
                     playerCollider->setMaxExtent(playerTransform->getPosition() + vec3(0.5f, 0.5f, 0.5f));
-                }
+                }*/
             }
             if(!flag_hit)
             {
