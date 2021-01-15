@@ -29,7 +29,6 @@ namespace CGEngine {
         bool isHorizontal;
         float finishPathPercent;
         bool increment;
-
         vec3  start;
         vec3 end;
 
@@ -40,8 +39,8 @@ namespace CGEngine {
         }
 
 
-        void setEnd(const vec3 &End) {
-            end = End;
+        void setEnd(const vec3 &end) {
+            EnemyMovement::end = end;
         }
 
 
@@ -56,6 +55,12 @@ namespace CGEngine {
 
 
         bool getIncrement() {
+
+            return increment;
+        }
+
+        void setIncrement() {
+            //EnemyMovement::increment = increment;
             if (finishPathPercent >= 1)
             {
                 increment = false;
@@ -65,11 +70,6 @@ namespace CGEngine {
                 increment = true;
             }
 
-            return increment;
-        }
-
-        void setIncrement(bool increment) {
-            EnemyMovement::increment = increment;
         }
 
 
@@ -99,7 +99,7 @@ namespace CGEngine {
 
         void initialize(){
 
-            position_sensitivity = {3.0f, 3.0f, 3.0f};
+            position_sensitivity = {5.0f, 5.0f, 5.0f};
             position = entity_transform->getPosition();
 
         }
@@ -115,42 +115,42 @@ namespace CGEngine {
             glm::vec3 front = entity_transform->getForward(), up =  entity_transform->getUp(), right = entity_transform->getRight();
             glm::vec3 current_sensitivity = this->position_sensitivity;
 
-            if(isHorizontal && position.x >= end.x) {
-                increment = !increment;
-            }
+            setIncrement();
 
-            else if(!isHorizontal && position.z >= end.z) {
-                increment = !increment;
-            }
 
-            else if(isHorizontal && position.x <= start.x) {
-                increment = !increment;
+            if(increment) {
+                finishPathPercent += delta_time/current_sensitivity.x;
             }
-
-            else if(!isHorizontal && position.z <= start.z) {
-                increment = !increment;
-            }
-
-            if(isHorizontal && increment) {
-                position += right * ((float)delta_time * current_sensitivity.x);
-            }
-
-            else if(isHorizontal && !increment)  {
-                position -= right * ((float)delta_time * current_sensitivity.x);
+            else if(!increment) {
+                finishPathPercent -= delta_time/current_sensitivity.x;
 
             }
+/*
+            if(isHorizontal) {
+                if(increment) {
+                    entity_transform->rotate(0, delta_time * 200 /current_sensitivity.x, 0);
+                }
 
-            else if(!isHorizontal && increment)  {
-                position += front * ((float)delta_time * current_sensitivity.z);
+                else if(!increment) {
+                    entity_transform->rotate(0, -delta_time * 200 /current_sensitivity.x, 0);
+
+                }
+
 
             }
 
-            else if(!isHorizontal && !increment)  {
-                position -= front * ((float)delta_time * current_sensitivity.z);
+            if(!isHorizontal) {
+                if(increment) {
+                    entity_transform->rotate(0, delta_time * 200 /current_sensitivity.x, 0);
+                }
 
+                else if(!increment) {
+                    entity_transform->rotate(0, -delta_time * 200 /current_sensitivity.x, 0);
+
+                }
             }
-
-            entity_transform->setPosition(position);
+*/
+            entity_transform->setPosition( glm::mix(start, end, finishPathPercent));
         }
 
 
@@ -161,7 +161,7 @@ namespace CGEngine {
         [[nodiscard]] float getSpeedUpFactor() const {return speedup_factor;}
 
 
-        void setPosition(glm::vec3 _pos){
+        void setPosition(glm::vec3 _pos) {
             this->position = _pos;
         }
 

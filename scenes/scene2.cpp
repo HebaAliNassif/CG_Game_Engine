@@ -28,8 +28,10 @@ namespace CGEngine
 
         vector<Entity*> mazeBoxs;
         vector<Entity*> mazeEnemies;
+        vector<Entity*> powerUps;
         Entity* Player;
         Entity* Enemy;
+        Entity* PowerUp;
 
         Box_Collider* playerCollider;
         Transform* playerTransform;
@@ -54,6 +56,7 @@ namespace CGEngine
             CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
             CGEngine::mesh_utils::loadOBJ("pacman", "assets/models/chomp.obj");
             CGEngine::mesh_utils::loadOBJ("enemy", "assets/models/ghost.obj");
+            CGEngine::mesh_utils::loadOBJ("powerUp", "assets/models/powerUp.obj");
 
 
             //Camera Entity
@@ -72,15 +75,16 @@ namespace CGEngine
             directional_light->addComponent<Transform>();
             directional_light->addComponent<Light>()->setLightType(LightType::DIRECTIONAL);
 
+            /*
             Entity* point_light = createEntity("light_point");
-            point_light->addComponent<Transform>()->setPosition(0,1,0);
+            point_light->addComponent<Transform>()->setPosition(15,1,10);
             point_light->addComponent<Light>()->setLightType(LightType::POINT);
-
+*/
             Entity* spot_light = createEntity("light_spot");
-            spot_light->addComponent<Transform>()->setPosition(0,1,-10);
+            spot_light->addComponent<Transform>()->setPosition(10,1,15);
             spot_light->addComponent<Light>()->setLightType(LightType::SPOT);
-            spot_light->getComponent<Light>()->setSpotAngle(1,1);
-
+            spot_light->getComponent<Light>()->setSpotAngle(15,20);
+            //spot_light->getComponent<Light>()->setDiffuse(0.5, 0.5, 0.5);
 
             //Systems
             addSystem<RenderSystem>();
@@ -154,6 +158,25 @@ namespace CGEngine
                 Enemy->getComponent<EnemyMovement>()->setEnd(availablePathes[i].end);
                 mazeEnemies.push_back(Enemy);
             }
+
+            vector<vec3> emptyPositions = mazeGenerator.GetEmptyPositions();
+            for (int i = 0; i < emptyPositions.size(); ++i) {
+                if (rand() % 100 < 20) {
+                    PowerUp = createEntity("PowerUp" + i);
+
+                    PowerUp->addComponent<Transform>();
+                    PowerUp->addComponent<Mesh_Component>()->setMeshModelName("powerUp");
+                    PowerUp->addComponent<Material_Component>()->setMaterialName("house_material");
+                    PowerUp->addComponent<Box_Collider>()->setMaxExtent(
+                            Enemy->getComponent<Transform>()->getPosition() + glm::vec3(1, 1, 1));
+                    PowerUp->getComponent<Box_Collider>()->setMinExtent(
+                            Enemy->getComponent<Transform>()->getPosition() - glm::vec3(1, 1, 1));
+                    PowerUp->getComponent<Transform>()->setPosition(emptyPositions[i]);
+
+                    powerUps.push_back(PowerUp);
+                }
+            }
+
 
         }
         RightLeftController* movePlayerContoller ;
