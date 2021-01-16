@@ -1,27 +1,24 @@
 #include <application_manager.h>
 #include <shader/shader.h>
-#include <irrKlang.h>
 #include <iostream>
 #include <scene.h>
-#include <camera.h>
-#include <scene1.cpp>
+#include <menu.cpp>
+#include <gameover.cpp>
 #include <game_scene.cpp>
-#include <../debug.h>
+#include <irrKlang.h>
 using namespace irrklang;
-
 class manager : public CGEngine::Application_Manager {
-    int scene=1;
+    int level = 1;
+
     CGEngine::WindowConfiguration2 getWindowConfiguration() override {
         return {"Scene", {1280, 720}, false};
     }
 
     // onInitialize() function is called once before the application loop
     void onInitialize() override {
-        CGEngine::Scene *Game_Scene = new CGEngine::Game_Scene(this);
-        goToScene(Game_Scene);
-        scene=2;
+        CGEngine::Scene *Scene = new CGEngine::Menu(this);
+        goToScene(Scene);
     }
-
 
     // onDraw(deltaTime) function is called every frame
     void onDraw(double deltaTime) override {
@@ -29,6 +26,24 @@ class manager : public CGEngine::Application_Manager {
     }
 
     void onKeyEvent(int key, int scancode, int action, int mods) override {
+        if(getKeyboard().isPressed(GLFW_KEY_SPACE) && dynamic_cast<CGEngine::Menu*>(current_scene))
+        {
+            level = 1;
+            CGEngine::Scene *Scene = new CGEngine::Game_Scene(this, level);
+            goToScene(Scene);
+        }
+        if(getKeyboard().isPressed(GLFW_KEY_SPACE) && dynamic_cast<CGEngine::Next_Level*>(current_scene))
+        {
+            level++;
+            CGEngine::Scene *Scene = new CGEngine::Game_Scene(this, level);
+            goToScene(Scene);
+        }
+        if(getKeyboard().isPressed(GLFW_KEY_SPACE) && dynamic_cast<CGEngine::Gameover*>(current_scene))
+        {
+            level = 1;
+            CGEngine::Scene *Scene = new CGEngine::Game_Scene(this, level);
+            goToScene(Scene);
+        }
     }
 
     void onCursorMoveEvent(double x, double y) override {
@@ -38,6 +53,8 @@ class manager : public CGEngine::Application_Manager {
     {
         delete current_scene;
     }
+
+
 };
 
 using namespace CGEngine;

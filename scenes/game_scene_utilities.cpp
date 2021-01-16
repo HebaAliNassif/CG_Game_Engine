@@ -37,7 +37,7 @@ namespace CGEngine {
         glm::vec3 center(one->getPosition().x, 0.6f, one->getPosition().z);
 
         // calculate AABB info (center, half-extents)
-        glm::vec3 aabb_half_extents(2.1f / 2.0f, 0.55f, 2.1f / 2.0f);
+        glm::vec3 aabb_half_extents(2.2f / 2.0f, 0.6f, 2.2f / 2.0f);
         glm::vec3 aabb_center(two->getPosition());
 
         // get difference vector between both centers

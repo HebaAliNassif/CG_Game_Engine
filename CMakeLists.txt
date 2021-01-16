@@ -38,9 +38,11 @@ set(COMMON_SOURCES
         source/common/ecs/scene.cpp
         source/common/ecs/entity.cpp
         scenes/scene1.cpp
+        scenes/menu.cpp
+        scenes/gameover.cpp
         scenes/game_scene.cpp
+        scenes/next_level.cpp
         source/common/components/mesh_component.cpp
-        source/scripts/shape_script.cpp
         source/common/serialization/json_base.cpp
         source/common/mesh/mesh-utils.cpp
         source/common/texture/texture.cpp

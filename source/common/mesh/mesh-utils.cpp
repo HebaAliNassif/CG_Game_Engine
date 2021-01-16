@@ -117,7 +117,8 @@ void CGEngine::mesh_utils::Cuboid(std::string name,
             const glm::vec3& center,
             const glm::vec3& size,
             const glm::vec2& texture_offset,
-            const glm::vec2& texture_tiling){
+            const glm::vec2& texture_tiling,
+            Color colorOfCube){
     CGEngine::Mesh* mesh = new Mesh();
     // These are just temporary variables that will help us populate the vertex array
     glm::vec3 half_size = size * 0.5f;
@@ -147,35 +148,35 @@ void CGEngine::mesh_utils::Cuboid(std::string name,
     // We populate each face with 4 vertices that define it's corners
     std::vector<Vertex> vertices = {
             //Upper Face
-            {corners[2], colored_faces ? GREEN : WHITE , tex_coords[0], normals[1][1]},
-            {corners[3], colored_faces ? GREEN : WHITE, tex_coords[2], normals[1][1]},
-            {corners[7], colored_faces ? GREEN : WHITE, tex_coords[3], normals[1][1]},
-            {corners[6], colored_faces ? GREEN : WHITE, tex_coords[1], normals[1][1]},
+            {corners[2], colored_faces ? GREEN : colorOfCube , tex_coords[0], normals[1][1]},
+            {corners[3], colored_faces ? GREEN : colorOfCube, tex_coords[2], normals[1][1]},
+            {corners[7], colored_faces ? GREEN : colorOfCube, tex_coords[3], normals[1][1]},
+            {corners[6], colored_faces ? GREEN : colorOfCube, tex_coords[1], normals[1][1]},
             //Lower Face
-            {corners[0], colored_faces ? MAGENTA : WHITE, tex_coords[0], normals[1][0]},
-            {corners[4], colored_faces ? MAGENTA : WHITE, tex_coords[2], normals[1][0]},
-            {corners[5], colored_faces ? MAGENTA : WHITE, tex_coords[3], normals[1][0]},
-            {corners[1], colored_faces ? MAGENTA : WHITE, tex_coords[1], normals[1][0]},
+            {corners[0], colored_faces ? MAGENTA : colorOfCube, tex_coords[0], normals[1][0]},
+            {corners[4], colored_faces ? MAGENTA : colorOfCube, tex_coords[2], normals[1][0]},
+            {corners[5], colored_faces ? MAGENTA : colorOfCube, tex_coords[3], normals[1][0]},
+            {corners[1], colored_faces ? MAGENTA : colorOfCube, tex_coords[1], normals[1][0]},
             //Right Face
-            {corners[4], colored_faces ? RED : WHITE, tex_coords[0], normals[0][1]},
-            {corners[6], colored_faces ? RED : WHITE, tex_coords[2], normals[0][1]},
-            {corners[7], colored_faces ? RED : WHITE, tex_coords[3], normals[0][1]},
-            {corners[5], colored_faces ? RED : WHITE, tex_coords[1], normals[0][1]},
+            {corners[4], colored_faces ? RED : colorOfCube, tex_coords[0], normals[0][1]},
+            {corners[6], colored_faces ? RED : colorOfCube, tex_coords[2], normals[0][1]},
+            {corners[7], colored_faces ? RED : colorOfCube, tex_coords[3], normals[0][1]},
+            {corners[5], colored_faces ? RED : colorOfCube, tex_coords[1], normals[0][1]},
             //Left Face
-            {corners[0], colored_faces ? CYAN : WHITE, tex_coords[0], normals[0][0]},
-            {corners[1], colored_faces ? CYAN : WHITE, tex_coords[2], normals[0][0]},
-            {corners[3], colored_faces ? CYAN : WHITE, tex_coords[3], normals[0][0]},
-            {corners[2], colored_faces ? CYAN : WHITE, tex_coords[1], normals[0][0]},
+            {corners[0], colored_faces ? CYAN : colorOfCube, tex_coords[0], normals[0][0]},
+            {corners[1], colored_faces ? CYAN : colorOfCube, tex_coords[2], normals[0][0]},
+            {corners[3], colored_faces ? CYAN : colorOfCube, tex_coords[3], normals[0][0]},
+            {corners[2], colored_faces ? CYAN : colorOfCube, tex_coords[1], normals[0][0]},
             //Front Face
-            {corners[1], colored_faces ? BLUE : WHITE, tex_coords[0], normals[2][1]},
-            {corners[5], colored_faces ? BLUE : WHITE, tex_coords[2], normals[2][1]},
-            {corners[7], colored_faces ? BLUE : WHITE, tex_coords[3], normals[2][1]},
-            {corners[3], colored_faces ? BLUE : WHITE, tex_coords[1], normals[2][1]},
+            {corners[1], colored_faces ? BLUE : colorOfCube, tex_coords[0], normals[2][1]},
+            {corners[5], colored_faces ? BLUE : colorOfCube, tex_coords[2], normals[2][1]},
+            {corners[7], colored_faces ? BLUE : colorOfCube, tex_coords[3], normals[2][1]},
+            {corners[3], colored_faces ? BLUE : colorOfCube, tex_coords[1], normals[2][1]},
             //Back Face
-            {corners[0], colored_faces ? YELLOW : WHITE, tex_coords[0], normals[2][0]},
-            {corners[2], colored_faces ? YELLOW : WHITE, tex_coords[2], normals[2][0]},
-            {corners[6], colored_faces ? YELLOW : WHITE, tex_coords[3], normals[2][0]},
-            {corners[4], colored_faces ? YELLOW : WHITE, tex_coords[1], normals[2][0]},
+            {corners[0], colored_faces ? YELLOW : colorOfCube, tex_coords[0], normals[2][0]},
+            {corners[2], colored_faces ? YELLOW : colorOfCube, tex_coords[2], normals[2][0]},
+            {corners[6], colored_faces ? YELLOW : colorOfCube, tex_coords[3], normals[2][0]},
+            {corners[4], colored_faces ? YELLOW : colorOfCube, tex_coords[1], normals[2][0]},
     };
     // Then we define the elements for the 2 triangles that define each face
     std::vector<GLuint> elements = {

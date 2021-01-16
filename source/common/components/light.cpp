@@ -100,6 +100,14 @@ bool CGEngine::Light::isEnabled() const {
 void CGEngine::Light::setEnabled(bool enabled) {
     Light::enabled = enabled;
 }
+
+const glm::vec3 &CGEngine::Light::getColor() const {
+    return color;
+}
+
+void CGEngine::Light::setColor(const glm::vec3 &color) {
+    Light::color = color;
+}
 //float CGEngine::Light::getattenuationConstant() {
 //    return attenuation.constant;
 //}

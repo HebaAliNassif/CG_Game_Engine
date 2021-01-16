@@ -153,6 +153,48 @@ namespace CGEngine
                 if(!light->isEnabled()) continue;
 
                 std::string prefix = "lights[" + std::to_string(light_index) + "].";
+                program->set(prefix + "type", static_cast<int>(light->getLightType()));
+                program->set(prefix + "color", light->getColor());
+                program->set(prefix + "diffuse", light->getDiffuse());
+                program->set(prefix + "specular", light->getSpecular());
+                program->set(prefix + "ambient", light->getAmbient());
+
+                switch (light->getLightType()) {
+                    case LightType::DIRECTIONAL:
+                        program->set(prefix + "direction",  glm::normalize(light->light_transform->getForward()));
+                        break;
+                    case LightType::POINT:
+
+                        program->set(prefix + "position", light->light_transform->getPosition());
+                        program->set(prefix + "attenuation_constant",(float) light->getAttenuation().constant);
+                        program->set(prefix + "attenuation_linear",(float) light->getAttenuation().linear);
+                        program->set(prefix + "attenuation_quadratic", (float)light->getAttenuation().quadratic);
+                        break;
+                    case LightType::SPOT:
+                        program->set(prefix + "position", light->light_transform->getPosition());
+                        program->set(prefix + "direction", glm::normalize(light->light_transform->getForward()));
+                        program->set(prefix + "attenuation_constant", light->getAttenuation().constant);
+                        program->set(prefix + "attenuation_linear", light->getAttenuation().linear);
+                        program->set(prefix + "attenuation_quadratic", light->getAttenuation().quadratic);
+                        program->set(prefix + "inner_angle", light->getSpotAngle().inner);
+                        program->set(prefix + "outer_angle", light->getSpotAngle().outer);
+                        break;
+                }
+                light_index++;
+                if(light_index >= MAX_LIGHT_COUNT) break;
+            }
+            // Since the light array in the shader has a constant size, we need to tell the shader how many lights we sent.
+            program->set("light_count", light_index);
+
+        }
+        /*void bindLightUniforms(std::vector<Light*>& lights, Shader* program) const {
+            int light_index = 0;
+            const int MAX_LIGHT_COUNT = 16;
+
+            for(auto &light : lights) {
+                if(!light->isEnabled()) continue;
+
+                std::string prefix = "lights[" + std::to_string(light_index) + "].";
 
                 program->set(prefix + "diffuse", light->getDiffuse());
                 program->set(prefix + "specular", light->getSpecular());
@@ -187,7 +229,7 @@ namespace CGEngine
             // Since the light array in the shader has a constant size, we need to tell the shader how many lights we sent.
             program->set("light_count", light_index);
 
-        }
+        }*/
 
     };
 }

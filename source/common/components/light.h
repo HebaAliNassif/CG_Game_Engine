@@ -34,6 +34,13 @@ namespace CGEngine {
 
     private:
         glm::vec3 diffuse =  {1,1,1}, specular =  {1,1,1}, ambient =  {0.1f, 0.1f, 0.1f};
+        glm:: vec3 color = {1,1,1};
+    public:
+        const glm::vec3 &getColor() const;
+
+        void setColor(const glm::vec3 &color);
+
+    private:
         // This affects how the light will dim out as we go further from the light.
         // The formula is light_received = light_emitted / (a*d^2 + b*d + c) where a, b, c are the quadratic, linear and constant factors respectively.
         struct attenuation_struct{

@@ -266,6 +266,7 @@ int CGEngine::Application_Manager::run() {
             if (current_scene != nullptr) {
                 current_scene->onExit();
                 current_scene->onDestroy();
+                delete current_scene;
             }
             current_scene = next_scene;
             next_scene = nullptr;

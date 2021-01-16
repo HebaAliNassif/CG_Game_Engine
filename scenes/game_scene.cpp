@@ -1,11 +1,9 @@
 #include <scene.h>
 #include <shader/shader.h>
-#include <glm/gtc/noise.hpp>
 #include <camera.h>
 #include <light.h>
 #include <render_system.h>
 #include <mesh_component.h>
-#include <shape_script.cpp>
 #include <mesh-utils.hpp>
 #include <resource_manager.h>
 #include <material_component.h>
@@ -14,15 +12,20 @@
 #include <right_left_controller.h>
 #include <righ_left_camera_controller.h>
 #include <list>
-#include <box_collider.h>
 #include <enemy_movement.h>
 #include <game_scene_utilities.cpp>
+#include <irrKlang.h>
+#include <gameover.cpp>
+#include <next_level.cpp>
+
+using namespace irrklang;
 
 namespace CGEngine {
 
 
     class Game_Scene : public CGEngine::Scene {
     public:
+        ISoundEngine *SoundEngine = createIrrKlangDevice();
 
         vector<Entity *> mazeBoxs;
         vector<Entity *> mazeEnemies;
@@ -42,7 +45,8 @@ namespace CGEngine {
 
         Entity *camera;
         glm::vec3  FinalPosition;
-        Game_Scene(Application_Manager *manager) : Scene(manager) {
+        Game_Scene(Application_Manager *manager, int level) : Scene(manager) {
+            SoundEngine->play2D("audio/HorrorPianoMusic.mp3", true);
             CreateMaterials();
 
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert",
@@ -52,6 +56,8 @@ namespace CGEngine {
                                          "TexturedLightShader");
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert",
                                          "assets/shaders/fshaders/light_array.frag", "TransShader");
+            Resource_Manager::LoadShader("assets/shaders/ex32_textured_material/sky_transform.vert",
+                                         "assets/shaders/ex32_textured_material/sky.frag", "SkyShader");
 
             CGEngine::mesh_utils::Cuboid("cube", true, glm::vec3(0, 0, 0), glm::vec3(2.0f, 1, 2.0f));
             CGEngine::mesh_utils::Sphere("sphere", glm::vec2(50, 50), true, glm::vec3(0, 0, 0), 0.6f);
@@ -70,20 +76,16 @@ namespace CGEngine {
 
 
             Entity *Plane = createEntity("Plane");
-            Plane->addComponent<Transform>()->setLocalScale(100, 1, 100);
+            Plane->addComponent<Transform>()->setLocalScale(150, 1, 150);
             Plane->addComponent<Mesh_Component>()->setMeshModelName("plane");
             Plane->addComponent<Material_Component>()->setMaterialName("default_material");
             Plane->getComponent<Transform>()->setLocalPosition({0, 0, 0});
 
-            Entity *directional_light = createEntity("light_directional");
-            directional_light->addComponent<Transform>();
-            directional_light->addComponent<Light>()->setLightType(LightType::DIRECTIONAL);
 
-            /*
-            Entity* point_light = createEntity("light_point");
-            point_light->addComponent<Transform>()->setPosition(15,1,10);
-            point_light->addComponent<Light>()->setLightType(LightType::POINT);
 
+
+
+/*
             Entity* spot_light = createEntity("light_spot");
             spot_light->addComponent<Transform>()->setPosition(10,1,15);
             spot_light->addComponent<Light>()->setLightType(LightType::SPOT);
@@ -139,7 +141,7 @@ namespace CGEngine {
             Player = createEntity("Player");
             Player->addComponent<Transform>()->setEulerAngles(0, 90, 0);
             Player->addComponent<Mesh_Component>()->setMeshModelName("pacman");
-            Player->addComponent<Material_Component>()->setMaterialName("house_material");
+            Player->addComponent<Material_Component>()->setMaterialName("player_material");
             Player->getComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition().x, 0.6,
                                                            mazeGenerator.GetStartPosition().z);
             Player->addComponent<RightLeftController>();
@@ -161,7 +163,7 @@ namespace CGEngine {
                 Enemy = createEntity("Enemy_" + to_string(i));
                 Enemy->addComponent<Transform>();
                 Enemy->addComponent<Mesh_Component>()->setMeshModelName("enemy");
-                Enemy->addComponent<Material_Component>()->setMaterialName("house_material");
+                Enemy->addComponent<Material_Component>()->setMaterialName("ghost_material");
                 Enemy->getComponent<Transform>()->setPosition(availablePathes[i].start.x,
                                                               mazeGenerator.GetStartPosition().y,
                                                               availablePathes[i].start.z);
@@ -175,23 +177,40 @@ namespace CGEngine {
             ////////////////////////////////////////////////////////////////////////
 
             //Creating poweups
-            vector<vec3> emptyPositions = mazeGenerator.GetEmptyPositions();
-            Entity *PowerUp;
-            for (int i = 1; i < mazeGenerator.GetWidth(); ++i) {
-                for (int j = 1; j < mazeGenerator.GetHeight(); ++j) {
-                    if (mazeGenerator.mMaze[i][j] == 0) {
-                        PowerUp = createEntity("PowerUp_" + to_string(i) + "_" + to_string(j));
-                        PowerUp->addComponent<Transform>()->setPosition(
-                                vec3(-mazeGenerator.GetWidth() / 2 + i * 2, 1, mazeGenerator.GetHeight() / 2 + j * 2));
-                        PowerUp->addComponent<Mesh_Component>()->setMeshModelName("powerUp");
-                        PowerUp->addComponent<Material_Component>()->setMaterialName("house_material");
-                        powerUps.push_back(PowerUp);
+            if(level>1) {
+                vector<vec3> emptyPositions = mazeGenerator.GetEmptyPositions();
+                Entity *PowerUp;
+                for (int i = 1; i < mazeGenerator.GetWidth(); ++i) {
+                    for (int j = 1; j < mazeGenerator.GetHeight(); ++j) {
+                        if (mazeGenerator.mMaze[i][j] == 0) {
+                            PowerUp = createEntity("PowerUp_" + to_string(i) + "_" + to_string(j));
+                            PowerUp->addComponent<Transform>()->setPosition(
+                                    vec3(-mazeGenerator.GetWidth() / 2 + i * 2, 1,
+                                         mazeGenerator.GetHeight() / 2 + j * 2));
+                            PowerUp->addComponent<Mesh_Component>()->setMeshModelName("powerUp");
+                            PowerUp->addComponent<Material_Component>()->setMaterialName("powerUp_material");
+                            powerUps.push_back(PowerUp);
 
+                        }
                     }
                 }
             }
             ////////////////////////////////////////////////////////////////////////
 
+            Entity* point_light = createEntity("light_point");
+            point_light->addComponent<Transform>()->setPosition(FinalPosition);
+            point_light->addComponent<Light>()->setLightType(LightType::POINT);
+            point_light->getComponent<Light>()->setColor(glm::vec3 (1, 0.1f, 0.2f));
+
+            Entity* point_light_2 = createEntity("light_point_2");
+            point_light_2->addComponent<Transform>()->setPosition(mazeGenerator.GetStartPosition());
+            point_light_2->addComponent<Light>()->setLightType(LightType::POINT);
+            point_light_2->getComponent<Light>()->setColor(glm::vec3 (1, 0.1f, 0.2f));
+
+            Entity *directional_light = createEntity("light_directional");
+            directional_light->addComponent<Transform>()->setForward(glm::vec3(0,1,0));
+            directional_light->addComponent<Light>()->setLightType(LightType::DIRECTIONAL);
+            directional_light->getComponent<Light>()->setColor(glm::vec3(1, 1, 1));
         }
 
         void start() override {
@@ -241,7 +260,8 @@ namespace CGEngine {
             for (auto &enemy: mazeEnemies) {
                 bool result = CheckCollisionWithEnemy(playerTransform, enemy->getComponent<Transform>());
                 if (result) {
-                    cout << "Game Over\n";
+                   CGEngine::Scene *Game_Scene = new CGEngine::Gameover(manager);
+                   manager->goToScene(Game_Scene);
                 }
             }
             ////////////////////////////////////////////////////////////////////////
@@ -251,6 +271,7 @@ namespace CGEngine {
             for (auto &powerup: powerUps) {
                 bool result = CheckCollisionWithPowerUp(playerTransform, powerup->getComponent<Transform>());
                 if (result) {
+                    SoundEngine->play2D("audio/powerup.mp3", false);
                     destroyEntity(powerup->name);
                     powerUps.erase (powerUps.begin()+index);
                 }
@@ -260,6 +281,7 @@ namespace CGEngine {
 
             //Check opening of maze
             if(powerUps.size()==0 && (Door->getComponent<Transform>()->getPosition().z) < FinalPosition.z+2) {
+                SoundEngine->play2D("audio/door.mp3", false);
                 Transform* doorTransform = Door->getComponent<Transform>();
                 glm::vec3 position = doorTransform->getPosition();
                 glm::vec3 forward = doorTransform->getForward();
@@ -269,9 +291,11 @@ namespace CGEngine {
             ////////////////////////////////////////////////////////////////////////
 
             //Check winning
-            if(playerTransform->getPosition().x> FinalPosition.x + 2.1f )
+            if(playerTransform->getPosition().x> FinalPosition.x + 1.1f )
             {
-                std::cout<<"Win\n";
+
+                CGEngine::Scene *Game_Scene = new CGEngine::Next_Level(manager);
+                manager->goToScene(Game_Scene);
             }
             ////////////////////////////////////////////////////////////////////////
         }
@@ -280,6 +304,8 @@ namespace CGEngine {
             //getEntity("Main Camera")->getComponent<FlyController>()->release();
             Resource_Manager::clear();
             mesh_utils::clearMeshes();
+            SoundEngine->drop();
+
         }
 
     };
