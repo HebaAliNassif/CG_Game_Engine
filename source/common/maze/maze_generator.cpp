@@ -132,6 +132,7 @@ vector<vec3> MazeGenerator::GetEmptyPositions()
 	}
 	return res;
 }
+
 vector<Path> MazeGenerator::GetPathes()
 {
 	vector<Path> res;

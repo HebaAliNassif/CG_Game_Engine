@@ -20,7 +20,7 @@ namespace CGEngine {
         glm::vec3 position;
         glm::vec3 position_sensitivity;
         float speedup_factor = 5.0f; // A speed multiplier if "Left Shift" is held.
-
+        bool  rotate = false;
         bool mouse_locked = false;
 
     public:
@@ -63,34 +63,36 @@ namespace CGEngine {
             glm::vec3 current_sensitivity = this->position_sensitivity;
             if(app->getKeyboard().isPressed(GLFW_KEY_LEFT_SHIFT)) current_sensitivity *= speedup_factor;
 
-            if(! freeze_movement_up&&app->getKeyboard().isPressed(GLFW_KEY_UP ))
+            if(! freeze_movement_up&&(app->getKeyboard().isPressed(GLFW_KEY_UP )|| app->getKeyboard().isPressed( GLFW_KEY_W)))
             {
-                position += front * ((float)delta_time * current_sensitivity.z);
+                entity_transform->setEulerAngles(0,180,0);
+                front = entity_transform->getForward();
+                position -= front * (((float)delta_time * current_sensitivity.z));
                 if(freeze_movement_down)freeze_movement_down = false;
-                //if(freeze_movement_up)freeze_movement_up = false;
-                //if(freeze_movement_down)freeze_movement_down = false;
             }
-            if(!freeze_movement_down&&app->getKeyboard().isPressed( GLFW_KEY_DOWN))
+            if(!freeze_movement_down&&(app->getKeyboard().isPressed( GLFW_KEY_DOWN)||app->getKeyboard().isPressed( GLFW_KEY_S)))
             {
+                entity_transform->setEulerAngles(0,0,0);
+                front = entity_transform->getForward();
                 position -= front * ((float)delta_time * current_sensitivity.z);
                 if(freeze_movement_up)freeze_movement_up=false;
-                //if(freeze_movement_up)freeze_movement_up=false;
-                //if(freeze_movement_down)freeze_movement_down=false;
             }
 
-            if(! freeze_movement_right&& app->getKeyboard().isPressed(GLFW_KEY_RIGHT))
+            if(! freeze_movement_right&& (app->getKeyboard().isPressed(GLFW_KEY_RIGHT)|| app->getKeyboard().isPressed( GLFW_KEY_D)))
             {
-                position += right * ((float)delta_time * current_sensitivity.x);
+                entity_transform->setEulerAngles(0,90,0);
+                glm::vec3 front = entity_transform->getForward();
+                position -= front * ((float)delta_time * current_sensitivity.x);
                 if(freeze_movement_left)freeze_movement_left=false;
-                //if(freeze_movement_right)freeze_movement_right=false;
-                //if(freeze_movement_left)freeze_movement_left=false;
             }
-            if(!freeze_movement_left&& app->getKeyboard().isPressed(GLFW_KEY_LEFT))
+            if(!freeze_movement_left&& (app->getKeyboard().isPressed(GLFW_KEY_LEFT)|| app->getKeyboard().isPressed( GLFW_KEY_A)))
             {
-                position -= right * ((float)delta_time * current_sensitivity.x);
+
+                entity_transform->setEulerAngles(0,-90,0);
+                glm::vec3 front = entity_transform->getForward();
+                position -= front * ((float)delta_time * current_sensitivity.x);
                 if(freeze_movement_right)freeze_movement_right=false;
-                //if(freeze_movement_right)freeze_movement_right=false;
-                //if(freeze_movement_left)freeze_movement_left=false;
+
             }
 
             entity_transform->setPosition(position);

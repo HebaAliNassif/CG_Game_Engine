@@ -30,6 +30,7 @@ public:
 	vec3 GetFinishPosition();
 	vector<Path> GetAvailablePathes();
 	vector<vec3> GetEmptyPositions();
+
 private:
 	vec3 mStartPosition;
 	vec3 mEndPosition;

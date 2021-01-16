@@ -29,6 +29,7 @@ set(VENDOR_SOURCES ${GLAD_SOURCE} ${IMGUI_SOURCES})
 
 
 set(COMMON_SOURCES
+        scenes/game_scene_utilities.cpp
         source/common/application_manager.cpp
         source/common/texture/screenshot.cpp
         source/common/shader/shader.cpp
@@ -37,7 +38,7 @@ set(COMMON_SOURCES
         source/common/ecs/scene.cpp
         source/common/ecs/entity.cpp
         scenes/scene1.cpp
-        scenes/scene2.cpp
+        scenes/game_scene.cpp
         source/common/components/mesh_component.cpp
         source/scripts/shape_script.cpp
         source/common/serialization/json_base.cpp

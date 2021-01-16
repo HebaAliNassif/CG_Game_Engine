@@ -5,7 +5,7 @@
 #include <scene.h>
 #include <camera.h>
 #include <scene1.cpp>
-#include <scene2.cpp>
+#include <game_scene.cpp>
 #include <../debug.h>
 using namespace irrklang;
 
@@ -17,8 +17,8 @@ class manager : public CGEngine::Application_Manager {
 
     // onInitialize() function is called once before the application loop
     void onInitialize() override {
-        CGEngine::Scene *scene2 = new CGEngine::scene2(this);
-        goToScene(scene2);
+        CGEngine::Scene *Game_Scene = new CGEngine::Game_Scene(this);
+        goToScene(Game_Scene);
         scene=2;
     }
 
