@@ -162,10 +162,6 @@ namespace CGEngine {
                 Enemy->addComponent<Transform>();
                 Enemy->addComponent<Mesh_Component>()->setMeshModelName("enemy");
                 Enemy->addComponent<Material_Component>()->setMaterialName("house_material");
-                Enemy->addComponent<Box_Collider>()->setMaxExtent(
-                        Enemy->getComponent<Transform>()->getPosition() + glm::vec3(1, 1, 1));
-                Enemy->getComponent<Box_Collider>()->setMinExtent(
-                        Enemy->getComponent<Transform>()->getPosition() - glm::vec3(1, 1, 1));
                 Enemy->getComponent<Transform>()->setPosition(availablePathes[i].start.x,
                                                               mazeGenerator.GetStartPosition().y,
                                                               availablePathes[i].start.z);

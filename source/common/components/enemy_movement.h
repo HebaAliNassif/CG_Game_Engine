@@ -63,11 +63,27 @@ namespace CGEngine {
             //EnemyMovement::increment = increment;
             if (finishPathPercent >= 1)
             {
+                if(isHorizontal)
+                {
+                    entity_transform->setEulerAngles(0,-90,0);
+                }
+                else
+                {
+                    entity_transform->setEulerAngles(0,180,0);
+                }
                 increment = false;
             }
             else if (finishPathPercent <= 0)
             {
                 increment = true;
+                if(isHorizontal)
+                {
+                    entity_transform->setEulerAngles(0,90,0);
+                }
+                else
+                {
+                    entity_transform->setEulerAngles(0,0,0);
+                }
             }
 
         }
@@ -95,6 +111,10 @@ namespace CGEngine {
 
         void setIsHorizontal(bool isHorizontal) {
             EnemyMovement::isHorizontal = isHorizontal;
+            if(isHorizontal)
+            {
+                entity_transform->setEulerAngles(0,90,0);
+            }
         }
 
         void initialize(){
