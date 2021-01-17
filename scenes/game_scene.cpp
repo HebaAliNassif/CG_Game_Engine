@@ -66,7 +66,8 @@ namespace CGEngine {
             CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
             CGEngine::mesh_utils::loadOBJ("pacman", "assets/models/chomp.obj");
             CGEngine::mesh_utils::loadOBJ("enemy", "assets/models/ghost.obj");
-            CGEngine::mesh_utils::loadOBJ("powerUp", "assets/models/powerUp.obj");
+            CGEngine::mesh_utils::loadOBJ("powerUp", "assets/models/cherry.obj");
+            CGEngine::mesh_utils::loadOBJ("cherry", "assets/models/cherry.obj");
 
 
             //Camera Entity

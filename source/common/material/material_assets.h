@@ -12,6 +12,7 @@ namespace CGEngine {
         Texture* PacmanTexture = Resource_Manager::loadTexture("assets/models/Textures/Chomp_AlbedoTransparency.png",1,"pacmanTexture");
         Texture* ghostTexture_1 = Resource_Manager::loadTexture("assets/models/Textures/Ghost_AlbedoTransparency.png",1,"ghostTexture");
         Texture* powerUpTexture_1 = Resource_Manager::loadTexture("assets/models/Textures/PowerPellet_AlbedoTransparency.png",1,"poerUpTexture");
+        Texture* cherryTexture_1 = Resource_Manager::loadTexture("assets/models/Textures/Cherry_AlbedoTransparency.png",1,"cherryTexture");
 
         CGEngine::Material *defaultMaterial = CGEngine::Material::createMaterial("default_material");
         defaultMaterial->setShaderName("SimpleLightShader");
@@ -123,6 +124,20 @@ namespace CGEngine {
         powerUpMaterial->addProperty<std::string>("ambient_occlusion_map","white");
         powerUpMaterial->addProperty<std::string>("emissive_map","black");
         powerUpMaterial->setRenderState(R1);
+
+        CGEngine::Material *cherryMaterial = CGEngine::Material::createMaterial("cherry_material");
+        cherryMaterial->setShaderName("TexturedLightShader");
+        cherryMaterial->addProperty<std::pair<Texture*,Sampler*>>("texture",std::make_pair(cherryTexture_1, sampler));
+        cherryMaterial->addProperty<glm::vec3>("albedo_tint",{2.0f, 2.0f, 2.0f});
+        cherryMaterial->addProperty<glm::vec3>("specular_tint",{1.0f, 3.0f, 1.0f});
+        cherryMaterial->addProperty<glm::vec3>("emissive_tint",{0.6f, 0.6f, 0.0f});
+        cherryMaterial->addProperty<glm::vec2>("roughness_range",{0.0f, 1.0f});
+        cherryMaterial->addProperty<std::string>("albedo_map","white");
+        cherryMaterial->addProperty<std::string>("specular_map","black");
+        cherryMaterial->addProperty<std::string>("roughness_map","white");
+        cherryMaterial->addProperty<std::string>("ambient_occlusion_map","white");
+        cherryMaterial->addProperty<std::string>("emissive_map","black");
+        cherryMaterial->setRenderState(R1);
     }
 }
 #endif //MATERIAL_ASSETS_H
