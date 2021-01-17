@@ -38,8 +38,7 @@ namespace CGEngine {
 
         // calculate AABB info (center, half-extents)
         glm::vec3 aabb_half_extents(2.2f / 2.0f, 0.6f, 2.2f / 2.0f);
-        glm::vec3 aabb_center(two->getPosition());
-
+        glm::vec3 aabb_center(two->getPosition().x, 0.5, two->getPosition().z);
         // get difference vector between both centers
         glm::vec3 difference = center - aabb_center;
         glm::vec3 clamped = glm::clamp(difference, -aabb_half_extents, aabb_half_extents);
@@ -50,8 +49,10 @@ namespace CGEngine {
         // retrieve vector between center circle and closest point AABB and check if length <= radius
         difference = closest - center;
         // return glm::length(difference) < 0.65f;
-        if (glm::length(difference) <= 0.7f)
+        if (glm::length(difference) <= 0.7f) {
+            //std::cout<<two->getPosition().x<<"\t"<<two->getPosition().y<<"\t"<<two->getPosition().z<<"\n";
             return std::make_tuple(true, VectorDirection(difference), difference);
+        }
         else
             return std::make_tuple(false, Front, glm::vec3(0.0f, 0.0f, 0.0f));
     }
