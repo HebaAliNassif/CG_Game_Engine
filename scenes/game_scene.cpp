@@ -42,7 +42,7 @@ namespace CGEngine {
 
         RightLeftController *movePlayerContoller;
         RightLeftCamerController *moveCamerContoller;
-
+        bool openDoor = false;
         Entity *camera;
         glm::vec3  FinalPosition;
         Game_Scene(Application_Manager *manager, int level) : Scene(manager) {
@@ -160,6 +160,7 @@ namespace CGEngine {
             }
             Entity *Enemy;
             for (int i = 0; i < availablePathes.size(); ++i) {
+                if(availablePathes[i].start == FinalPosition||availablePathes[i].end == FinalPosition)continue;
                 Enemy = createEntity("Enemy_" + to_string(i));
                 Enemy->addComponent<Transform>();
                 Enemy->addComponent<Mesh_Component>()->setMeshModelName("enemy");
@@ -281,11 +282,12 @@ namespace CGEngine {
 
             //Check opening of maze
             if(powerUps.size()==0 && (Door->getComponent<Transform>()->getPosition().z) < FinalPosition.z+2) {
-                SoundEngine->play2D("audio/door.mp3", false);
+                if(!openDoor)SoundEngine->play2D("audio/door.mp3", false);
+                openDoor= true;
                 Transform* doorTransform = Door->getComponent<Transform>();
                 glm::vec3 position = doorTransform->getPosition();
                 glm::vec3 forward = doorTransform->getForward();
-                position -= forward * ((float)deltaTime * 2);
+                position -= forward * ((float)deltaTime * 1.0f);
                 doorTransform->setPosition(position);
             }
             ////////////////////////////////////////////////////////////////////////
@@ -305,7 +307,7 @@ namespace CGEngine {
             Resource_Manager::clear();
             mesh_utils::clearMeshes();
             SoundEngine->drop();
-
+            std::cout<<"Here Unloading resources\n ";
         }
 
     };
