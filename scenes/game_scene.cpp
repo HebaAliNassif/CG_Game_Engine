@@ -182,7 +182,7 @@ namespace CGEngine {
                 Entity *PowerUp;
                 for (int i = 1; i < mazeGenerator.GetWidth(); ++i) {
                     for (int j = 1; j < mazeGenerator.GetHeight(); ++j) {
-                        if (mazeGenerator.mMaze[i][j] == 0) {
+                        if (mazeGenerator.mMaze[i][j] == 0 && (rand()%(200*level))<(level*25)) {
                             PowerUp = createEntity("PowerUp_" + to_string(i) + "_" + to_string(j));
                             PowerUp->addComponent<Transform>()->setPosition(
                                     vec3(-mazeGenerator.GetWidth() / 2 + i * 2, 1,
