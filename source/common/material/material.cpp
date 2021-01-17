@@ -71,3 +71,9 @@ CGEngine::RenderState* CGEngine::Material::getRenderState()
 {
     return renderState;
 }
+
+void CGEngine::Material::DestroyMaterial() {
+    for (auto &iter : listOfMaterials) {
+        delete iter.second;
+    }
+}

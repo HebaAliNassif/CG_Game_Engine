@@ -1,7 +1,9 @@
+#ifndef MENU_H
+#define MENU_H
 #include <scene.h>
 #include <camera.h>
 #include <iostream>
-#include <material_assets_2.h>
+#include <material/material_assets.h>
 #include <mesh_component.h>
 #include <material_component.h>
 #include <mesh-utils.hpp>
@@ -20,7 +22,8 @@ namespace CGEngine
         Entity* camera;
 
         Menu(Application_Manager *manager) : Scene(manager) {
-            CreateMaterials2();
+           this-> manager = manager;
+            CreateMaterials();
 
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex30_light_array/light_array.frag","SimpleLightShader");
             Resource_Manager::LoadShader("assets/shaders/ex29_light/light_transform.vert","assets/shaders/ex32_textured_material/light_array.frag","TexturedLightShader");
@@ -104,10 +107,18 @@ namespace CGEngine
 
 
         }
+        void onExit() override
+        {
+            //Resource_Manager::clear();
+            //mesh_utils::clearMeshes();
+            //Material::DestroyMaterial();
+        }
         ~Menu()
         {
             //Resource_Manager::clear();
             //mesh_utils::clearMeshes();
+            //Material::DestroyMaterial();
         }
     };
 }
+#endif //MENU_H

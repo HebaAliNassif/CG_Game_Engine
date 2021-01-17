@@ -98,7 +98,7 @@ namespace CGEngine {
             return size;
         }
 
-
+        void delay();
     };
 
 

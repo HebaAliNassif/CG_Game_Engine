@@ -25,7 +25,7 @@ namespace CGEngine {
 
     class Game_Scene : public CGEngine::Scene {
     public:
-        ISoundEngine *SoundEngine = createIrrKlangDevice();
+        ISoundEngine *SoundEngine;
 
         vector<Entity *> mazeBoxs;
         vector<Entity *> mazeEnemies;
@@ -49,6 +49,8 @@ namespace CGEngine {
         Entity *camera;
         glm::vec3  FinalPosition;
         Game_Scene(Application_Manager *manager, int level) : Scene(manager) {
+            SoundEngine = createIrrKlangDevice();
+            this-> manager = manager;
             SoundEngine->play2D("audio/HorrorPianoMusic.mp3", true);
             CreateMaterials();
 
@@ -69,7 +71,7 @@ namespace CGEngine {
             CGEngine::mesh_utils::loadOBJ("house", "assets/models/House/House.obj");
             CGEngine::mesh_utils::loadOBJ("pacman", "assets/models/chomp.obj");
             CGEngine::mesh_utils::loadOBJ("enemy", "assets/models/ghost.obj");
-            CGEngine::mesh_utils::loadOBJ("powerUp", "assets/models/cherry.obj");
+            CGEngine::mesh_utils::loadOBJ("powerUp", "assets/models/powerUp.obj");
             CGEngine::mesh_utils::loadOBJ("cherry", "assets/models/cherry.obj");
 
 
@@ -191,8 +193,8 @@ namespace CGEngine {
                             PowerUp->addComponent<Transform>()->setPosition(
                                     vec3(-mazeGenerator.GetWidth() / 2 + i * 2, 1,
                                          mazeGenerator.GetHeight() / 2 + j * 2));
-                            PowerUp->addComponent<Mesh_Component>()->setMeshModelName("powerUp");
-                            PowerUp->addComponent<Material_Component>()->setMaterialName("powerUp_material");
+                            PowerUp->addComponent<Mesh_Component>()->setMeshModelName("cherry");
+                            PowerUp->addComponent<Material_Component>()->setMaterialName("cherry_material");
                             powerUps.push_back(PowerUp);
 
                         }
@@ -300,7 +302,7 @@ namespace CGEngine {
             for (auto &powerup: powerUps) {
                 bool result = CheckCollisionWithPowerUp(playerTransform, powerup->getComponent<Transform>());
                 if (result) {
-                    SoundEngine->play2D("audio/powerup.mp3", false);
+                    SoundEngine->play2D("audio/cherry.mp3", false);
                     destroyEntity(powerup->name);
                     powerUps.erase (powerUps.begin()+index);
                 }
@@ -317,10 +319,8 @@ namespace CGEngine {
                     destroyEntity(powerup->name);
                     Safe.erase (Safe.begin()+p);
                     Player->getComponent<Material_Component>()->setMaterialName("default_material");
-                    std::cout<< "time ";
                     IsSafe=true;
                     SafetyTimer=deltaTime;
-                    std::cout << deltaTime << std::endl;
                 }
                 p++;
             }
@@ -341,6 +341,10 @@ namespace CGEngine {
             //Check winning
             if(playerTransform->getPosition().x> FinalPosition.x + 1.1f )
             {
+                Resource_Manager::clear();
+                mesh_utils::clearMeshes();
+                Material::DestroyMaterial();
+                SoundEngine->drop();
                 IsSafe=false;
                 CGEngine::Scene *Game_Scene = new CGEngine::Next_Level(manager);
                 manager->goToScene(Game_Scene);
@@ -350,10 +354,7 @@ namespace CGEngine {
 
         void onExit() override {
             //getEntity("Main Camera")->getComponent<FlyController>()->release();
-            Resource_Manager::clear();
-            mesh_utils::clearMeshes();
-            SoundEngine->drop();
-            std::cout<<"Here Unloading resources\n ";
+
         }
 
     };

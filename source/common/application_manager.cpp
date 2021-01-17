@@ -413,6 +413,13 @@ void CGEngine::Application_Manager::setMainApp(CGEngine::Application_Manager *ma
     Application_Manager::mainApp = mainApp;
 }
 
+void CGEngine::Application_Manager::delay() {
+    double time = glfwGetTime();
+    while(time+5>glfwGetTime())
+    {
+    }
+}
+
 
 
 

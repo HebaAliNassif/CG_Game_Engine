@@ -68,7 +68,7 @@ namespace CGEngine {
         static Material* getMaterial(std::string materialName);
 
         Material(){}
-
+        static void DestroyMaterial();
         std::string shaderName;
         const std::string &getShaderName() const;
         Shader* getShader() const;

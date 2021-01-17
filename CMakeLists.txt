@@ -42,6 +42,7 @@ set(COMMON_SOURCES
         scenes/gameover.cpp
         scenes/game_scene.cpp
         scenes/next_level.cpp
+        scenes/start.cpp
         source/common/components/mesh_component.cpp
         source/common/serialization/json_base.cpp
         source/common/mesh/mesh-utils.cpp
@@ -53,6 +54,7 @@ set(COMMON_SOURCES
         source/common/components/light.cpp
         source/common/maze/maze_generator.cpp
         source/common/components/box_collider.cpp
+        scenes/level_transition.cpp
         )
 
 
