@@ -30,6 +30,9 @@ namespace CGEngine {
         vector<Entity *> mazeBoxs;
         vector<Entity *> mazeEnemies;
         vector<Entity *> powerUps;
+        vector<Entity *> Safe;
+        bool IsSafe=false;
+        double SafetyTimer;
         Entity *Player;
         Entity *Door;
 
@@ -42,7 +45,7 @@ namespace CGEngine {
 
         RightLeftController *movePlayerContoller;
         RightLeftCamerController *moveCamerContoller;
-
+        bool openDoor = false;
         Entity *camera;
         glm::vec3  FinalPosition;
         Game_Scene(Application_Manager *manager, int level) : Scene(manager) {
@@ -161,6 +164,7 @@ namespace CGEngine {
             }
             Entity *Enemy;
             for (int i = 0; i < availablePathes.size(); ++i) {
+                if(availablePathes[i].start == FinalPosition||availablePathes[i].end == FinalPosition)continue;
                 Enemy = createEntity("Enemy_" + to_string(i));
                 Enemy->addComponent<Transform>();
                 Enemy->addComponent<Mesh_Component>()->setMeshModelName("enemy");
@@ -168,7 +172,6 @@ namespace CGEngine {
                 Enemy->getComponent<Transform>()->setPosition(availablePathes[i].start.x,
                                                               mazeGenerator.GetStartPosition().y,
                                                               availablePathes[i].start.z);
-
                 Enemy->addComponent<EnemyMovement>()->setIsHorizontal(
                         (availablePathes[i].start.z - availablePathes[i].end.z) == 0);
                 Enemy->getComponent<EnemyMovement>()->setStart(availablePathes[i].start);
@@ -195,6 +198,24 @@ namespace CGEngine {
                         }
                     }
                 }
+            }else{
+                vector<vec3> emptyPositions = mazeGenerator.GetEmptyPositions();
+                Entity *PowerUp;
+                for (int i = 1; i < mazeGenerator.GetWidth(); i+=4) {
+                    for (int j = 1; j < mazeGenerator.GetHeight(); j+=4) {
+                        if (mazeGenerator.mMaze[i][j] == 0) {
+                            PowerUp = createEntity("PowerUp_" + to_string(i) + "_" + to_string(j));
+                            PowerUp->addComponent<Transform>()->setPosition(
+                                    vec3(-mazeGenerator.GetWidth() / 2 + i * 2, 1,
+                                         mazeGenerator.GetHeight() / 2 + j * 2));
+                            PowerUp->addComponent<Mesh_Component>()->setMeshModelName("powerUp");
+                            PowerUp->addComponent<Material_Component>()->setMaterialName("powerUp_material");
+                            Safe.push_back(PowerUp);
+
+                        }
+                    }
+                }
+
             }
             ////////////////////////////////////////////////////////////////////////
 
@@ -227,6 +248,10 @@ namespace CGEngine {
         }
 
         void update(double deltaTime) override {
+            if(IsSafe==true  && deltaTime>(SafetyTimer+0.03)){
+                IsSafe=false;
+                Player->getComponent<Material_Component>()->setMaterialName("player_material");
+            }
 
             //Check player collision with maze
             bool flag_hit = false;
@@ -258,13 +283,16 @@ namespace CGEngine {
             ////////////////////////////////////////////////////////////////////////
 
             //Check player collision with enemies
-            for (auto &enemy: mazeEnemies) {
-                bool result = CheckCollisionWithEnemy(playerTransform, enemy->getComponent<Transform>());
-                if (result) {
-                   CGEngine::Scene *Game_Scene = new CGEngine::Gameover(manager);
-                   manager->goToScene(Game_Scene);
+            if(IsSafe!=true){
+                for (auto &enemy: mazeEnemies) {
+                    bool result = CheckCollisionWithEnemy(playerTransform, enemy->getComponent<Transform>());
+                    if (result) {
+                        CGEngine::Scene *Game_Scene = new CGEngine::Gameover(manager);
+                        manager->goToScene(Game_Scene);
+                    }
                 }
             }
+
             ////////////////////////////////////////////////////////////////////////
 
             //Check player collision with powerups
@@ -278,15 +306,34 @@ namespace CGEngine {
                 }
                 index++;
             }
+
+            ////////////////////////////////////////////////////////////////////////
+            int p=0;
+            //Check player collision with safe
+            for (auto &powerup: Safe) {
+                bool result = CheckCollisionWithPowerUp(playerTransform, powerup->getComponent<Transform>());
+                if (result) {
+                    SoundEngine->play2D("audio/powerup.mp3", false);
+                    destroyEntity(powerup->name);
+                    Safe.erase (Safe.begin()+p);
+                    Player->getComponent<Material_Component>()->setMaterialName("default_material");
+                    std::cout<< "time ";
+                    IsSafe=true;
+                    SafetyTimer=deltaTime;
+                    std::cout << deltaTime << std::endl;
+                }
+                p++;
+            }
             ////////////////////////////////////////////////////////////////////////
 
             //Check opening of maze
-            if(powerUps.size()==0 && (Door->getComponent<Transform>()->getPosition().z) < FinalPosition.z+2) {
-                SoundEngine->play2D("audio/door.mp3", false);
+            if( powerUps.size()==0 && (Door->getComponent<Transform>()->getPosition().z) < FinalPosition.z+2) {
+                if(!openDoor)SoundEngine->play2D("audio/door.mp3", false);
+                openDoor= true;
                 Transform* doorTransform = Door->getComponent<Transform>();
                 glm::vec3 position = doorTransform->getPosition();
                 glm::vec3 forward = doorTransform->getForward();
-                position -= forward * ((float)deltaTime * 2);
+                position -= forward * ((float)deltaTime * 1.0f);
                 doorTransform->setPosition(position);
             }
             ////////////////////////////////////////////////////////////////////////
@@ -294,7 +341,7 @@ namespace CGEngine {
             //Check winning
             if(playerTransform->getPosition().x> FinalPosition.x + 1.1f )
             {
-
+                IsSafe=false;
                 CGEngine::Scene *Game_Scene = new CGEngine::Next_Level(manager);
                 manager->goToScene(Game_Scene);
             }
@@ -306,7 +353,7 @@ namespace CGEngine {
             Resource_Manager::clear();
             mesh_utils::clearMeshes();
             SoundEngine->drop();
-
+            std::cout<<"Here Unloading resources\n ";
         }
 
     };
