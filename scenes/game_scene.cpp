@@ -289,6 +289,10 @@ namespace CGEngine {
                 for (auto &enemy: mazeEnemies) {
                     bool result = CheckCollisionWithEnemy(playerTransform, enemy->getComponent<Transform>());
                     if (result) {
+                        Resource_Manager::clear();
+                        mesh_utils::clearMeshes();
+                        Material::DestroyMaterial();
+                        SoundEngine->play2D("audio/scream.mp3", false);
                         CGEngine::Scene *Game_Scene = new CGEngine::Gameover(manager);
                         manager->goToScene(Game_Scene);
                     }
@@ -344,7 +348,6 @@ namespace CGEngine {
                 Resource_Manager::clear();
                 mesh_utils::clearMeshes();
                 Material::DestroyMaterial();
-                SoundEngine->drop();
                 IsSafe=false;
                 CGEngine::Scene *Game_Scene = new CGEngine::Next_Level(manager);
                 manager->goToScene(Game_Scene);
@@ -353,7 +356,7 @@ namespace CGEngine {
         }
 
         void onExit() override {
-            //getEntity("Main Camera")->getComponent<FlyController>()->release();
+            SoundEngine->drop();
 
         }
 
